@@ -1,11 +1,14 @@
 <script setup lang="ts">
 // Importamos las funciones necesarias de Vue
-import { validateFormatUsername, validateFormatPassword, validateFormatEmail } from '@/others/validations/formatValidations'
+import { validateFormatUsername, validateFormatEmail } from '@/others/validations/formatValidations'
 import { ref, computed } from 'vue'
 import { useDark, useToggle } from '@vueuse/core'
 import Password from 'primevue/password'
+import { useRouter } from 'vue-router';
+
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
+const router = useRouter()
 
 // Creamos instancias reactivas para los datos
 const loginVisible = ref(true)
@@ -63,7 +66,7 @@ const login = () => {
   }
 
   if (!emailError.value && !passwordError.value && !emailVacio.value && !passwordVacio.value) {
-    alert('Inicio de sesión exitoso')
+    router.push({name:'home'})
     // Aquí puedes redirigir al usuario a la página de inicio
   }
 }
@@ -138,7 +141,7 @@ const closePopup = () => {
     </div>
 
     <!-- Derecha - Formulario de inicio de sesión o registro -->
-    <div class="w-1/2 flex justify-center items-center rightContent bg-gray-100 dark:bg-gray-900">
+    <div class="w-1/2 flex justify-center items-center dark:bg-white bg-gray-900">
       <!-- Contenedor del formulario -->
 
       <div class="max-w-md w-full">
