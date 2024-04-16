@@ -145,7 +145,7 @@ const closePopup = () => {
       <!-- Contenedor del formulario -->
 
       <div class="max-w-md w-full">
-        <h2 class="font-bold dark:text-white text-gray-900 text-4xl">
+        <h2 class="font-bold dark:text-white text-gray-900 text-2xl">
           {{ loginVisible ? 'INICIAR SESIÓN' : 'REGISTRO' }}
         </h2>
         <!-- Darkmode Button -->
@@ -162,16 +162,16 @@ const closePopup = () => {
             <label>
               <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-black dark:text-white text-sm font-bold mb-2">Email</span>
               <input type="email" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="email" v-model="email" placeholder="Email" />
-              <p v-if="emailError" class="mt-2 text-pink-600 text-sm">Por favor, introduce un email válido.</p>
-              <p v-if="emailVacio" class="mt-2 text-pink-600 text-sm">Este campo es obligatorio.</p>
+              <p v-if="emailError" class="mt-1 text-pink-600 text-sm">Por favor, introduce un email válido.</p>
+              <p v-if="emailVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
           </div>
           <div class="mb-6">
             <label>
               <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-black dark:text-white text-sm font-bold mb-2">Contraseña</span>
               <input type="password" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" v-model="password" placeholder="Password" />
-              <p v-if="passwordError" class="mt-2 text-pink-600 text-sm">Contraseña incorrecta.</p>
-              <p v-if="passwordVacio" class="mt-2 text-pink-600 text-sm">Este campo es obligatorio.</p>
+              <p v-if="passwordError" class="mt-1 text-pink-600 text-sm">Contraseña incorrecta.</p>
+              <p v-if="passwordVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
           </div>
           <div class="flex items-center justify-between">
@@ -182,31 +182,31 @@ const closePopup = () => {
         <!-- Formulario de registro -->
         <form id="register-form" class="bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4" :class="{ hidden: loginVisible }" @submit.prevent="register">
           <!-- Campos de registro -->
-          <div class="mb-4">
+          <div class="mb-2">
             <label>
               <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-gray-700 dark:text-white text-sm font-bold mb-2">Username</span>
               <input type="text" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="username" v-model="username" placeholder="Username" />
-              <p v-if="usernameError" class="mt-2 text-pink-600 text-sm">Solo se permiten números y letras.</p>
-              <p v-if="usernameVacio" class="mt-2 text-pink-600 text-sm">Este campo es obligatorio.</p>
+              <p v-if="usernameError" class="mt-1 text-pink-600 text-sm">Solo se permiten números y letras.</p>
+              <p v-if="usernameVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
           </div>
           <div class="mb-4">
             <label>
               <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-gray-700 dark:text-white text-sm font-bold mb-2">Email</span>
               <input type="email" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="email" v-model="email" placeholder="Email" />
-              <p v-if="emailError" class="mt-2 text-pink-600 text-sm">Por favor, introduce un email válido.</p>
-              <p v-if="emailVacio" class="mt-2 text-pink-600 text-sm">Este campo es obligatorio.</p>
+              <p v-if="emailError" class="mt-1 text-pink-600 text-sm">Por favor, introduce un email válido.</p>
+              <p v-if="emailVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
           </div>
           <div class="mb-24">
             <label>
               <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-gray-700 dark:text-white text-sm font-bold mb-2">Contraseña</span>
               <Password v-model="password" toggleMask placeholder="Password" />
-              <p v-if="passwordVacio" class="mt-2 text-pink-600 text-sm">Este campo es obligatorio.</p>
+              <p v-if="passwordVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
           </div>
           <div class="flex items-center justify-between">
-            <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">Registrarse</button>
+            <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">Registrarse</button>
           </div>
         </form>
 

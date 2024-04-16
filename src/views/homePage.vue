@@ -13,7 +13,7 @@ const toggleDark = useToggle(isDark)
         <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">CodeSnap</span>
       </RouterLink>
     </div>
-    <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+    <div class="flex items-center md:order-2 space-x-4 md:space-x-5 rtl:space-x-reverse">
       <!-- Botón de cambio de tema -->
       <button @click="toggleDark()" class="focus:outline-none top-4 right-4 dark:bg-white border border-gray-300 bg-gray-800 rounded-full px-1 py-1 flex items-center">
         <i class="text-gray-600 mr-2" :class="[isDark ? 'bx-moon' : 'bx-sun']"></i>
