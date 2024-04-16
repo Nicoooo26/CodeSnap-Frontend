@@ -99,7 +99,7 @@ const register = () => {
     passwordVacio.value = false
   }
 
-  if (!usernameVacio.value && !usernameError.value && !emailError.value && !emailVacio.value) {
+  if (!usernameVacio.value && !usernameError.value && !emailError.value && !emailVacio.value  && !passwordVacio.value) {
     showPopup.value = true
     setTimeout(() => {
       closePopup()
@@ -131,36 +131,36 @@ const closePopup = () => {
     </div>
 
     <!-- Izquierda - Información de la aplicación -->
-    <div class="w-1/2 flex flex-col justify-center px-8 leftContent bg-black text-white dark:bg-gray-800">
+    <div class="w-1/2 flex flex-col justify-center px-8 bg-gray-50 text-white dark:bg-gray-800  border-r-2 dark:border-white border-black">
       <!-- Contenedor de la imagen, el título y la descripción -->
       <div class="flex flex-col items-center mb-8">
-        <h1 class="text-4xl font-bold mb-4 dark:text-gray-900">Bienvenido a CodeSnap</h1>
-        <img src="/public/logo.jpg" alt="Descripción de la imagen" class="w-40 h-40 mb-4" />
-        <p class="text-lg text-center dark:text-gray-900">Descubre una plataforma para desarrolladores donde puedes compartir tus ideas, código y experiencias de manera fácil y rápida.</p>
+        <h1 class="text-4xl font-bold mb-4 text-gray-900 dark:text-white">Bienvenido a CodeSnap</h1>
+        <img src="/logo.jpg" alt="Descripción de la imagen" class="w-40 h-40 mb-4 bg-white" />
+        <p class="text-lg text-center text-gray-900 dark:text-white">Descubre una plataforma para desarrolladores donde puedes compartir tus ideas, código y experiencias de manera fácil y rápida.</p>
       </div>
     </div>
 
     <!-- Derecha - Formulario de inicio de sesión o registro -->
-    <div class="w-1/2 flex justify-center items-center dark:bg-white bg-gray-900">
+    <div class="w-1/2 flex justify-center items-center bg-gray-50 dark:bg-gray-800">
       <!-- Contenedor del formulario -->
 
       <div class="max-w-md w-full">
-        <h2 class="font-bold text-white dark:text-gray-900 text-4xl">
+        <h2 class="font-bold dark:text-white text-gray-900 text-4xl">
           {{ loginVisible ? 'INICIAR SESIÓN' : 'REGISTRO' }}
         </h2>
         <!-- Darkmode Button -->
-        <button @click="toggleDark()" class="text-gray-800 focus:outline-none absolute top-4 right-4 bg-gray-200 rounded-lg px-3 py-1">
-          <i class="mr-2" :class="[isDark ? 'bx-moon' : 'bx-sun']"></i>
-          <span v-if="isDark">☀️</span>
-          <span v-else>🌙</span>
-        </button>
+        <button @click="toggleDark()" class="focus:outline-none absolute top-4 right-4 dark:bg-white border border-gray-300 bg-gray-800 rounded-full px-1 py-1 flex items-center">
+    <i class="text-gray-600 mr-2" :class="[isDark ? 'bx-moon' : 'bx-sun']"></i>
+    <span class="text-gray-600" v-if="isDark">☀️</span>
+    <span class="text-gray-600" v-else>🌙</span>
+</button>
 
         <!-- Formulario de inicio de sesión -->
-        <form id="login-form" class="bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4" :class="{ hidden: !loginVisible }" @submit.prevent="login">
+        <form id="login-form" class="bg-white dark:bg-gray-700 shadow-md rounded px-8 pt-6 pb-8 mb-4" :class="{ hidden: !loginVisible }" @submit.prevent="login">
           <!-- Campos de inicio de sesión -->
           <div class="mb-4">
             <label>
-              <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-gray-700 dark:text-white text-sm font-bold mb-2">Email</span>
+              <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-black dark:text-white text-sm font-bold mb-2">Email</span>
               <input type="email" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="email" v-model="email" placeholder="Email" />
               <p v-if="emailError" class="mt-2 text-pink-600 text-sm">Por favor, introduce un email válido.</p>
               <p v-if="emailVacio" class="mt-2 text-pink-600 text-sm">Este campo es obligatorio.</p>
@@ -168,14 +168,14 @@ const closePopup = () => {
           </div>
           <div class="mb-6">
             <label>
-              <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-gray-700 dark:text-white text-sm font-bold mb-2">Contraseña</span>
+              <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-black dark:text-white text-sm font-bold mb-2">Contraseña</span>
               <input type="password" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" v-model="password" placeholder="Password" />
               <p v-if="passwordError" class="mt-2 text-pink-600 text-sm">Contraseña incorrecta.</p>
               <p v-if="passwordVacio" class="mt-2 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
           </div>
           <div class="flex items-center justify-between">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Iniciar Sesión</button>
+            <button type="submit" class="bg-gray-500 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Iniciar Sesión</button>
           </div>
         </form>
 
@@ -200,7 +200,7 @@ const closePopup = () => {
           </div>
           <div class="mb-24">
             <label>
-              <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-gray-700 dark:text-white text-sm font-bold mb-2">Email</span>
+              <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-gray-700 dark:text-white text-sm font-bold mb-2">Contraseña</span>
               <Password v-model="password" toggleMask placeholder="Password" />
               <p v-if="passwordVacio" class="mt-2 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
@@ -212,7 +212,7 @@ const closePopup = () => {
 
         <!-- Botón de cambio entre Login y Registro -->
         <div class="flex items-center justify-center mt-6">
-          <button id="toggle-form" class="text-sm text-white hover:underline focus:outline-none" type="button" @click="toggleForm">
+          <button id="toggle-form" class="text-sm dark:text-white text-black hover:underline focus:outline-none" type="button" @click="toggleForm">
             {{ toggleButtonText }}
           </button>
         </div>

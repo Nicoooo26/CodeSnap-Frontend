@@ -1,10 +1,13 @@
 .leftContent {
-  background-image: url('/public/backLoggin.jpg');
+  background-image: url('/backLoggin.jpg');
   background-size: cover;
   background-position: center;
 }
 .rightContent {
-  background-image: url('/public/backRegister.jpg');
+  background-image: url('/backRegister.jpg');
   background-size: cover;
   background-position: center;
+}
+.logoNavbar {
+  background-color: white;
 }
