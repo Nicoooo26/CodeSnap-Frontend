@@ -4,7 +4,6 @@ export const validateFormatUsername = (username: string) => {
 }
 
 export const validateFormatEmail = (email: string) => {
-  // Utilizando una expresión regular simple para validar la estructura de un correo electrónico
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return regex.test(email)
 }

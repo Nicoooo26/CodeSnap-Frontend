@@ -1,0 +1,4 @@
+Base de datos :
+
+Users:
+ID,Username,Email,Password,fechaNacimiento,Sexo,NumTelefono,Fecha_Ingreso,NombreCompleto,Descripcion,Ubicación,Foto,NumFotos,NumCodigos,ForosCreados
