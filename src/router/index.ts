@@ -1,32 +1,47 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import ErrorPage from '@/views/ErrorPage.vue'
-import LogginRegisterComponent from '@/views/LogginRegisterComponent.vue'
-import HomePage from '@/views/HomePage.vue'
+import ErrorPage from '@/views/ErrorView.vue'
+import LogginRegisterComponent from '@/views/LogginRegisterView.vue'
+import HomeView from '@/views/HomeView.vue'
+import ProfileView from '@/views/ProfileView.vue'
+import SettingView from '@/views/SettingView.vue'
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {  
+    {
       path: '/error',
       name: 'error',
       component: ErrorPage
     },
     {
-      path: '/',
-      name: 'login',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: LogginRegisterComponent
+      path: '/layout',
+      name: 'Public',
+      component: DefaultLayout,
+      redirect: '/',
+      children: [
+        {
+          path: '/home',
+          name: 'home',
+          component: HomeView
+        },
+        {
+          path: '/setting',
+          name: 'setting',
+          component: SettingView
+        },
+        {
+          path: '/profile',
+          name: 'profile',
+          component: ProfileView
+        }
+      ]
     },
     {
-      path: '/home',
-      name: 'home',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: HomePage
-    },
+      path: '/',
+      name: 'login',
+      component: LogginRegisterComponent
+    }
   ]
 })
 
