@@ -1,4 +1,13 @@
+La Base de datos y el servidor esta en un repositorio externo desde el que se consumirán los datos
 Base de datos :
 
 Users:
 ID,Username,Email,Password,fechaNacimiento,Sexo,NumTelefono,Fecha_Ingreso,NombreCompleto,Descripcion,Ubicación,Foto,NumFotos,NumCodigos,ForosCreados
+
+Codigos:
+...
+Foros:
+...
+Fotos:
+...
+
