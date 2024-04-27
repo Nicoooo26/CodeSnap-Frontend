@@ -41,5 +41,10 @@
     </div>
   </footer>
 </template>
+<style scoped>
+#page-container {
+  position: relative;
+  min-height: 100vh;
+}
 
-<style scoped></style>
+</style>
