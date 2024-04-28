@@ -21,7 +21,7 @@ import AppFooter from '@/components/AppFooter.vue'
 }
 
 #content-wrap {
-  padding-bottom: 2.5rem;    
+  padding-bottom: 2.5rem;  
 }
 
 #footer {

@@ -51,8 +51,8 @@ const router = createRouter({
           component: InstantaneasView
         },
         {
-          path: '/explorer',
-          name: 'explorer',
+          path: '/explorar',
+          name: 'explorar',
           component: ExplorerView
         },
         {
