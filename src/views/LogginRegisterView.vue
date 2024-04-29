@@ -4,15 +4,19 @@ import { ref, computed } from 'vue'
 import { useDark, useToggle } from '@vueuse/core'
 import Password from 'primevue/password'
 import { useRouter } from 'vue-router'
+import { createUser } from '@/bbdd/functionsBBDD'
+
 
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
 const router = useRouter()
 
 const loginVisible = ref(true)
-const username = ref('')
-const email = ref('')
-const password = ref('')
+const usernameRegistro = ref('')
+const emailLogin = ref('')
+const passwordLogin = ref('')
+const emailRegistro = ref('')
+const passwordRegistro = ref('')
 const emailError = ref(false)
 const passwordError = ref(false)
 const usernameError = ref(false)
@@ -27,9 +31,11 @@ const toggleButtonText = computed(() => {
 
 const toggleForm = () => {
   loginVisible.value = !loginVisible.value
-  username.value = ''
-  email.value = ''
-  password.value = ''
+  usernameRegistro.value = ''
+  emailLogin.value = ''
+  passwordLogin.value = ''
+  emailRegistro.value=''
+  passwordRegistro.value=''
   emailError.value = false
   emailVacio.value = false
   passwordError.value = false
@@ -39,21 +45,21 @@ const toggleForm = () => {
 }
 
 const login = () => {
-  if (password.value === '') {
+  if (passwordLogin.value === '') {
     passwordVacio.value = true
   } else {
     passwordVacio.value = false
-    if (password.value !== '1234') {
+    if (passwordLogin.value !== '1234') {
       passwordError.value = true
     } else {
       passwordError.value = false
     }
   }
-  if (email.value === '') {
+  if (emailLogin.value === '') {
     emailVacio.value = true
   } else {
     emailVacio.value = false
-    if (!validateFormatEmail(email.value)) {
+    if (!validateFormatEmail(emailLogin.value)) {
       emailError.value = true
     } else {
       emailError.value = false
@@ -66,34 +72,36 @@ const login = () => {
 }
 
 const register = () => {
-  if (username.value === '') {
+  if (usernameRegistro.value === '') {
     usernameVacio.value = true
   } else {
     usernameVacio.value = false
-    if (!validateFormatUsername(username.value)) {
+    if (!validateFormatUsername(usernameRegistro.value)) {
       usernameError.value = true
     } else {
       usernameError.value = false
     }
   }
-  if (email.value === '') {
+  if (emailRegistro.value === '') {
     emailVacio.value = true
   } else {
     emailVacio.value = false
-    if (!validateFormatEmail(email.value)) {
+    if (!validateFormatEmail(emailRegistro.value)) {
       emailError.value = true
     } else {
       emailError.value = false
     }
   }
-  if (password.value === '') {
+  if (passwordRegistro.value === '') {
     passwordVacio.value = true
   } else {
     passwordVacio.value = false
   }
 
   if (!usernameVacio.value && !usernameError.value && !emailError.value && !emailVacio.value && !passwordVacio.value) {
+    createUser(usernameRegistro.value,emailRegistro.value,passwordRegistro.value);
     showPopup.value = true
+    loginVisible.value=true
     setTimeout(() => {
       closePopup()
     }, 5000)
@@ -145,7 +153,7 @@ const closePopup = () => {
           <div class="mb-4">
             <label>
               <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-black dark:text-white text-sm font-bold mb-2">Email</span>
-              <input type="email" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="emailLogin" v-model="email" placeholder="Email" />
+              <input type="email" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="emailLogin" v-model="emailLogin" placeholder="Email" />
               <p v-if="emailError" class="mt-1 text-pink-600 text-sm">Por favor, introduce un email válido.</p>
               <p v-if="emailVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
@@ -153,7 +161,7 @@ const closePopup = () => {
           <div class="mb-6">
             <label>
               <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-black dark:text-white text-sm font-bold mb-2">Contraseña</span>
-              <input type="password" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" v-model="password" placeholder="Password" />
+              <input type="password" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" v-model="passwordLogin" placeholder="Password" />
               <p v-if="passwordError" class="mt-1 text-pink-600 text-sm">Contraseña incorrecta.</p>
               <p v-if="passwordVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
@@ -167,7 +175,7 @@ const closePopup = () => {
           <div class="mb-2">
             <label>
               <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-gray-700 dark:text-white text-sm font-bold mb-2">Username</span>
-              <input type="text" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="username" v-model="username" placeholder="Username" />
+              <input type="text" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="username" v-model="usernameRegistro" placeholder="Username" />
               <p v-if="usernameError" class="mt-1 text-pink-600 text-sm">Solo se permiten números y letras.</p>
               <p v-if="usernameVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
@@ -175,7 +183,7 @@ const closePopup = () => {
           <div class="mb-4">
             <label>
               <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-gray-700 dark:text-white text-sm font-bold mb-2">Email</span>
-              <input type="email" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="emailRegistro" v-model="email" placeholder="Email" />
+              <input type="email" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="emailRegistro" v-model="emailRegistro" placeholder="Email" />
               <p v-if="emailError" class="mt-1 text-pink-600 text-sm">Por favor, introduce un email válido.</p>
               <p v-if="emailVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
@@ -183,7 +191,7 @@ const closePopup = () => {
           <div class="mb-24">
             <label>
               <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-gray-700 dark:text-white text-sm font-bold mb-2">Contraseña</span>
-              <Password v-model="password" toggleMask />
+              <Password v-model="passwordRegistro" toggleMask />
               <p v-if="passwordVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
           </div>
