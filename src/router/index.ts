@@ -10,6 +10,7 @@ import ExplorerView from '@/views/ExplorerView.vue'
 import ForosView from '@/views/ForosView.vue'
 import InstantaneasView from '@/views/InstantaneasView.vue'
 import SupportView from '@/views/SupportView.vue'
+import ForosInsideView from '@/views/ForosInsideView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,7 +44,12 @@ const router = createRouter({
         {
           path: '/foros',
           name: 'foros',
-          component: ForosView
+          component: ForosView,
+        },
+        {
+          path: '/foros/:lenguaje',
+          name: 'lenguaje',
+          component: ForosInsideView,
         },
         {
           path: '/instantaneas',

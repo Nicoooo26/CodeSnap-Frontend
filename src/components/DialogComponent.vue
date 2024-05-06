@@ -1,3 +1,16 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const emits = defineEmits(['cerrar'])
+const profilePicture = ref('usuario.png')
+const username = ref('nico26')
+const fechaNacimiento = ref('2000-01-01')
+const gender = ref(1)
+const phoneNumber = ref('123-456-7890')
+const description = ref('Descripción del usuariolalallallalallalal')
+const location = ref('Madrid, Spain')
+const fullName = ref('Nicolas Guañuna')
+</script>
 
 <template>
   <div class="modal w-70">
@@ -38,20 +51,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-
-const emits = defineEmits(['cerrar'])
-const profilePicture = ref('usuario.png')
-const username = ref('nico26')
-const fechaNacimiento = ref('2000-01-01')
-const gender = ref(1)
-const phoneNumber = ref('123-456-7890')
-const description = ref('Descripción del usuariolalallallalallalal')
-const location = ref('Madrid, Spain')
-const fullName = ref('Nicolas Guañuna')
-</script>
 
 <style scoped>
 .modal {

@@ -1,4 +1,4 @@
-La Base de datos y el servidor esta en un repositorio externo desde el que se consumirán los datos
+
 Base de datos :
 
 Users:
