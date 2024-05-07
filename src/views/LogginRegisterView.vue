@@ -5,15 +5,17 @@ import { useDark, useToggle } from '@vueuse/core'
 import Password from 'primevue/password'
 import { useRouter } from 'vue-router'
 import { createUser } from '@/bbdd/functionsBBDD'
-
+import axios from 'axios'
+import { useTokenStore } from '@/storage/store'
 
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
 const router = useRouter()
+const storeToken = useTokenStore()
 
 const loginVisible = ref(true)
 const usernameRegistro = ref('')
-const emailLogin = ref('')
+const usernameLogin = ref('')
 const passwordLogin = ref('')
 const emailRegistro = ref('')
 const passwordRegistro = ref('')
@@ -24,6 +26,7 @@ const usernameVacio = ref(false)
 const showPopup = ref(false)
 const emailVacio = ref(false)
 const passwordVacio = ref(false)
+const credencialesError = ref(false)
 
 const toggleButtonText = computed(() => {
   return loginVisible.value ? '¿No tienes una cuenta? Regístrate' : '¿Tienes una cuenta? Inicia Sesión'
@@ -32,7 +35,7 @@ const toggleButtonText = computed(() => {
 const toggleForm = () => {
   loginVisible.value = !loginVisible.value
   usernameRegistro.value = ''
-  emailLogin.value = ''
+  usernameLogin.value = ''
   passwordLogin.value = ''
   emailRegistro.value=''
   passwordRegistro.value=''
@@ -49,26 +52,22 @@ const login = () => {
     passwordVacio.value = true
   } else {
     passwordVacio.value = false
-    if (passwordLogin.value !== '1234') {
-      passwordError.value = true
-    } else {
-      passwordError.value = false
-    }
   }
-  if (emailLogin.value === '') {
-    emailVacio.value = true
+  if (usernameLogin.value === '') {
+    usernameVacio.value = true
   } else {
-    emailVacio.value = false
-    if (!validateFormatEmail(emailLogin.value)) {
-      emailError.value = true
-    } else {
-      emailError.value = false
-    }
+    usernameVacio.value = false
+  }
+  if(passwordVacio.value===false && usernameVacio.value===false){
+    axios.post('http://localhost/DWES/CodeSnapBackEnd/auth',{
+      username: usernameLogin.value,
+      password: passwordLogin.value
+    }).then(response => {
+      storeToken.saveToken(response.data.token)
+      router.push({ name: 'home' })
+    })
   }
 
-  if (!emailError.value && !passwordError.value && !emailVacio.value && !passwordVacio.value) {
-    router.push({ name: 'home' })
-  }
 }
 
 const register = () => {
@@ -152,17 +151,16 @@ const closePopup = () => {
         <form id="login-form" class="bg-white dark:bg-gray-700 shadow-md rounded px-8 pt-6 pb-8 mb-4" :class="{ hidden: !loginVisible }" @submit.prevent="login">
           <div class="mb-4">
             <label>
-              <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-black dark:text-white text-sm font-bold mb-2">Email</span>
-              <input type="email" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="emailLogin" v-model="emailLogin" placeholder="Email" />
-              <p v-if="emailError" class="mt-1 text-pink-600 text-sm">Por favor, introduce un email válido.</p>
-              <p v-if="emailVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
+              <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-black dark:text-white text-sm font-bold mb-2">Username</span>
+              <input type="text" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="usernameLogin" v-model="usernameLogin" placeholder="Username" />
+              <p v-if="usernameVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
           </div>
           <div class="mb-6">
             <label>
               <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-black dark:text-white text-sm font-bold mb-2">Contraseña</span>
               <input type="password" class="dark:bg-gray-600 dark:text-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" v-model="passwordLogin" placeholder="Password" />
-              <p v-if="passwordError" class="mt-1 text-pink-600 text-sm">Contraseña incorrecta.</p>
+              <p v-if="credencialesError" class="mt-1 text-pink-600 text-sm">Credenciales incorrectas.</p>
               <p v-if="passwordVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
           </div>

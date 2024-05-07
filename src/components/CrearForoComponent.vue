@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { defineEmits } from 'vue';
 
 const emits = defineEmits(['cerrar']);
 const selectedLanguage = ref('');
