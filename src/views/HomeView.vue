@@ -4,16 +4,12 @@ import axios from 'axios';
 
 const storeToken = useTokenStore()
 const token = storeToken.getToken
-// Configurar el token en el header de la solicitud
-const headers = {
-  'Authorization': `Bearer ${token}`
-};
+
 
 // Hacer la solicitud utilizando Axios
-axios.get('http://localhost/DWES/CodeSnapBackEnd/user', { headers })
+axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?token=${token}`, {headers:{'api-key':`${token}`} })
   .then(response => {
     // Manejar la respuesta aquí
-    console.log(response.data);
   })
   .catch(error => {
     // Manejar errores aquí

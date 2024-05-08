@@ -2,7 +2,8 @@
 import { ref } from 'vue'
 import TabViewComponent from '@/components/TabViewComponent.vue'
 import DialogComponent from '@/components/DialogComponent.vue'
-
+import { useTokenStore } from '@/storage/store';
+import axios from 'axios';
 
 const mostrarModal = ref(false)
 
@@ -16,18 +17,47 @@ const controlarEmit = () => {
   cerrarModal()
 }
 
-const profilePicture = ref('usuario.png')
-const username = ref('nico26')
-const fechaNacimiento = ref('01/01/2000')
-const gender = ref(1)
-const phoneNumber = ref('123-456-7890')
-const joinDate = ref('En CodeSnap desde el 26 de Marzo del 2012')
-const description = ref('Descripción del usuariolalallallalallalal')
-const location = ref('Madrid, Spain')
-const fullName = ref('Nicolas Guañuna')
-const numFotos = ref(10)
-const numcodigos = ref(20)
-const numForos = ref(5)
+const storeToken = useTokenStore()
+const token = storeToken.getToken
+let datos =null
+
+// Hacer la solicitud utilizando Axios
+axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?token=${token}`, {headers:{'api-key':`${token}`} })
+  .then(response => {
+    // Manejar la respuesta aquí
+    datos=response.data.usuarios[0]
+    username.value = datos.username
+    profilePicture.value=datos.foto?datos.foto:'usuario.png'
+    fechaNacimiento.value = datos.fechanacimiento
+    description.value = datos.descripcion
+    gender.value=datos.sexo
+    phoneNumber.value = datos.telefono
+    joinDate.value = `En CodeSnap desde el ${datos.fecha_ingreso}`
+    location.value=datos.ubicacion
+    fullName.value=datos.nombrecompleto
+    numForos.value=datos.foroscreados
+    numFotos.value=datos.numfotos
+    numcodigos.value=datos.numcodigo
+
+  })
+  .catch(error => {
+    // Manejar errores aquí
+    console.error('Error:', error);
+  });   
+
+
+const profilePicture = ref('')
+const username = ref('')
+const fechaNacimiento = ref('')
+const gender = ref()
+const phoneNumber = ref('')
+const joinDate = ref('')
+const description = ref('')
+const location = ref('')
+const fullName = ref('')
+const numFotos = ref(0)
+const numcodigos = ref(0)
+const numForos = ref(0)
 </script>
 
 <template>

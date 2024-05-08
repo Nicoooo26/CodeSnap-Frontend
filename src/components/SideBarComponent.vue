@@ -1,5 +1,28 @@
 <script setup lang="ts">
+import { useTokenStore } from '@/storage/store';
+import axios from 'axios';
+import { ref } from 'vue';
+
 const props = defineProps(['visible'])
+const storeToken = useTokenStore()
+const token = storeToken.getToken
+const username = ref('')
+const profilePicture = ref('')
+let datos =null
+
+// Hacer la solicitud utilizando Axios
+axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?token=${token}`, {headers:{'api-key':`${token}`} })
+  .then(response => {
+    // Manejar la respuesta aquí
+    datos=response.data.usuarios[0]
+    username.value = datos.username
+    profilePicture.value=datos.foto?datos.foto:'usuario.png'
+
+  })
+  .catch(error => {
+    // Manejar errores aquí
+    console.error('Error:', error);
+  }); 
 </script>
 <template>
   <div>
@@ -113,8 +136,8 @@ const props = defineProps(['visible'])
             <div class="mt-auto">
               <hr class="my-3 border-t border-gray-300" />
               <div class="m-3 flex items-center cursor-pointer p-3 gap-2 rounded border border-gray-300 hover:bg-gray-100">
-                <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" />
-                <span class="font-bold">User129342</span>
+                <Avatar :image="profilePicture" shape="circle" />
+                <span class="font-bold">{{username}}</span>
               </div>
             </div>
           </RouterLink>
