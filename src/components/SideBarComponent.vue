@@ -2,6 +2,7 @@
 import { useCookies } from 'vue3-cookies';
 import axios from 'axios';
 import { ref } from 'vue';
+import router from '@/router'
 
 const props = defineProps(['visible'])
 const {cookies} = useCookies()
@@ -23,6 +24,12 @@ axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?token=${to
     // Manejar errores aquí
     console.error('Error:', error);
   }); 
+
+  const logout = () =>{
+    cookies.remove('token')
+    router.push('/')
+  }
+
 </script>
 <template>
   <div>
@@ -120,14 +127,14 @@ axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?token=${to
                     </div>
                   </li>
                 </RouterLink>
-                <RouterLink to="/">
+                <button @click="logout" >
                   <li>
                     <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 transition-duration-150 transition-colors p-ripple hover:bg-red-600/20">
                       <i class="pi pi-sign-out mr-2 text-red-600"></i>
-                      <span class="font-medium text-red-600">Log Out</span>
+                      <span class="font-medium text-red-600">Desconectar</span>
                     </div>
                   </li>
-                  </RouterLink>
+                  </button>
                 </ul>
               </li>
             </ul>

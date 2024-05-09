@@ -32,12 +32,12 @@ const items = ref([
         command: profileMove
       },
       {
-        label: 'Settings',
+        label: 'Ajustes',
         icon: 'pi pi-cog',
         command: settingMove
       },
       {
-        label: 'Sign out',
+        label: 'Desconectar',
         icon: 'pi pi-sign-out',
         command: signOut
       }

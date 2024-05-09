@@ -1,15 +1,64 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useCookies } from 'vue3-cookies';
+import axios from 'axios';
 
 const emits = defineEmits(['cerrar'])
-const profilePicture = ref('usuario.png')
-const username = ref('nico26')
-const fechaNacimiento = ref('2000-01-01')
-const gender = ref(1)
-const phoneNumber = ref('123-456-7890')
-const description = ref('Descripción del usuariolalallallalallalal')
-const location = ref('Madrid, Spain')
-const fullName = ref('Nicolas Guañuna')
+
+const {cookies} = useCookies()
+const token = cookies.get('token')
+let datos =null
+let id:any = null
+
+// Hacer la solicitud utilizando Axios
+axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?token=${token}`, {headers:{'api-key':`${token}`} })
+  .then(response => {
+    // Manejar la respuesta aquí
+    datos=response.data.usuarios[0]
+    id = datos.id
+    username.value = datos.username
+    profilePicture.value=datos.foto?datos.foto:'usuario.png'
+    fechanacimiento.value = datos.fechanacimiento
+    descripcion.value = datos.descripcion
+    sexo.value=datos.sexo
+    telefono.value = datos.telefono
+    ubicacion.value=datos.ubicacion
+    nombrecompleto.value=datos.nombrecompleto
+  })
+  .catch(error => {
+    // Manejar errores aquí
+    console.error('Error:', error);
+  });   
+
+
+const profilePicture = ref('')
+const username = ref('')
+const fechanacimiento = ref('')
+const sexo = ref()
+const telefono = ref('')
+const descripcion = ref('')
+const ubicacion = ref('')
+const nombrecompleto = ref('')
+
+const actualizarUser=()=>{
+  axios.put(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?id=${id}`, {
+    username: username.value?username.value:null,
+    fechanacimiento: fechanacimiento.value,
+    sexo: sexo.value?sexo.value:null,
+    telefono: telefono.value?telefono.value:null,
+    nombrecompleto:nombrecompleto.value?nombrecompleto.value:null,
+    descripcion: descripcion.value?descripcion.value:null,
+    ubicacion: ubicacion.value?ubicacion.value:null,
+  
+  },{headers:{'api-key':`${token}`} })
+  .then(response => {
+  })
+  .catch(error => {
+    // Manejar errores aquí
+    console.error('Error:', error);
+  }); 
+}
+
 </script>
 
 <template>
@@ -31,21 +80,21 @@ const fullName = ref('Nicolas Guañuna')
           </div>
         </div>
         <div class="flex flex-col justify-center space-y-5">
-          <input type="text" placeholder="Username" class="border p-2 rounded w-full h-10" :value="username" />
-          <input type="text" placeholder="Nombre Completo" class="border p-2 rounded w-full h-10" :value="fullName" />
+          <input type="text" placeholder="Username" class="border p-2 rounded w-full h-10" :value="username" :v-model="username" />
+          <input type="text" placeholder="Nombre Completo" class="border p-2 rounded w-full h-10" :value="nombrecompleto" :v-model="nombrecompleto" />
         </div>
       </div>
       <div class="flex gap-4 mb-6">
-        <input type="date" placeholder="Fecha de nacimiento" :value="fechaNacimiento" class="border p-2 rounded w-1/4" />
-        <input type="text" placeholder="Location" :value="location" class="border p-2 rounded w-1/4" />
-        <input type="text" placeholder="Teléfono" :value="phoneNumber" class="border p-2 rounded w-1/4" />
-        <input type="text" placeholder="Genero" :value="gender" class="border p-2 rounded w-1/4" />
+        <input type="date" placeholder="Fecha de nacimiento" :value="fechanacimiento" :v-model="fechanacimiento" class="border p-2 rounded w-1/4" />
+        <input type="text" placeholder="Ubicación" :value="ubicacion" :v-model="ubicacion" class="border p-2 rounded w-1/4" />
+        <input type="text" placeholder="Teléfono" :value="telefono" :v-model="telefono" class="border p-2 rounded w-1/4" />
+        <input type="text" placeholder="Genero" :value="sexo" :v-model="sexo" class="border p-2 rounded w-1/4" />
       </div>
       <div class="mb-4">
-        <textarea placeholder="Descripcion" :value="description" class="border p-2 rounded w-full"></textarea>
+        <textarea placeholder="Descripcion" :value="descripcion" :v-model="descripcion" class="border p-2 rounded w-full"></textarea>
       </div>
       <div class="flex justify-end">
-        <button type="button" id="theme-toggle" class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 focus:outline-none transition-colors mr-2">Guardar cambios</button>
+        <button type="button" id="theme-toggle" class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 focus:outline-none transition-colors mr-2" @click="actualizarUser">Guardar cambios</button>
         <button type="button" id="cancelar" class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 focus:outline-none transition-colors" @click="emits('cerrar')">Cancelar</button>
       </div>
     </div>
