@@ -4,14 +4,13 @@ import { ref, computed } from 'vue'
 import { useDark, useToggle } from '@vueuse/core'
 import Password from 'primevue/password'
 import { useRouter } from 'vue-router'
-import { createUser } from '@/bbdd/functionsBBDD'
+import { useCookies } from 'vue3-cookies'
 import axios from 'axios'
-import { useTokenStore } from '@/storage/store'
 
+const {cookies} = useCookies();
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
 const router = useRouter()
-const storeToken = useTokenStore()
 
 const loginVisible = ref(true)
 const usernameRegistro = ref('')
@@ -64,7 +63,7 @@ const login = () => {
       username: usernameLogin.value,
       password: passwordLogin.value
     }).then(response => {
-      storeToken.saveToken(response.data.token)
+      cookies.set('token',response.data.token)
       router.push({ name: 'home' })
     }).catch(error => {
     credencialesError.value=true

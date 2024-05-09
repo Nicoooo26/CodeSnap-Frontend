@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import TabViewComponent from '@/components/TabViewComponent.vue'
 import DialogComponent from '@/components/DialogComponent.vue'
-import { useTokenStore } from '@/storage/store';
+import { useCookies } from 'vue3-cookies';
 import axios from 'axios';
 
 const mostrarModal = ref(false)
@@ -17,8 +17,8 @@ const controlarEmit = () => {
   cerrarModal()
 }
 
-const storeToken = useTokenStore()
-const token = storeToken.getToken
+const {cookies} = useCookies()
+const token = cookies.get('token')
 let datos =null
 
 // Hacer la solicitud utilizando Axios

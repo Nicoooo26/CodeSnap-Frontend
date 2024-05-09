@@ -3,6 +3,9 @@ import { useDark, useToggle } from '@vueuse/core'
 import router from '@/router'
 import { ref } from 'vue'
 import SideBarComponent from './SideBarComponent.vue';
+import { useCookies } from 'vue3-cookies';
+
+const {cookies} = useCookies()
 
 const visible = ref(false)
 const VisibleOff=()=>{
@@ -12,7 +15,10 @@ const isDark = useDark()
 const toggleDark = useToggle(isDark)
 
 const menu = ref()
-const signOut = () => router.push('/')
+const signOut = () => {
+  cookies.remove('token')
+  router.push('/')
+}
 const profileMove = () => router.push('/profile')
 const settingMove = () => router.push('/setting')
 

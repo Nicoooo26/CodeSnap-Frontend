@@ -11,6 +11,11 @@ import ForosView from '@/views/ForosView.vue'
 import InstantaneasView from '@/views/InstantaneasView.vue'
 import SupportView from '@/views/SupportView.vue'
 import ForosInsideView from '@/views/ForosInsideView.vue'
+import { useCookies } from 'vue3-cookies';
+
+const {cookies} = useCookies()
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -85,6 +90,27 @@ const router = createRouter({
     }
   ]
 })
+
+let isFirstLoad = true;
+
+router.beforeEach((to, from, next) => {
+  const token = cookies.get('token');
+
+  if (isFirstLoad) {
+    // Si es la primera carga del proyecto
+    if (token) {
+      // Si hay token, redirige a la página de inicio
+      next({ name: 'home' });
+    } else {
+      // Si no hay token, redirige a la página de inicio de sesión
+      next({ name: 'login' });
+    }
+    isFirstLoad = false; // Marca que ya no es la primera carga
+  } else {
+    // Si no es la primera carga del proyecto, continúa navegando
+    next();
+  }
+});
 
 
 export default router

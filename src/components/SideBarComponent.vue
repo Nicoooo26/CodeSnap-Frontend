@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useTokenStore } from '@/storage/store';
+import { useCookies } from 'vue3-cookies';
 import axios from 'axios';
 import { ref } from 'vue';
 
 const props = defineProps(['visible'])
-const storeToken = useTokenStore()
-const token = storeToken.getToken
+const {cookies} = useCookies()
+const token = cookies.get('token')
 const username = ref('')
 const profilePicture = ref('')
 let datos =null
