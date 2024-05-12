@@ -9,6 +9,7 @@ const descripcion = ref('');
 const crearForo = () => {
   // Aquí va la lógica
 };
+
 </script>
 
 <template>

@@ -127,9 +127,9 @@ axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?token=${to
                     </div>
                   </li>
                 </RouterLink>
-                <button @click="logout" >
+                <button @click="logout" class="w-full">
                   <li>
-                    <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 transition-duration-150 transition-colors p-ripple hover:bg-red-600/20">
+                    <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-red-600/20">
                       <i class="pi pi-sign-out mr-2 text-red-600"></i>
                       <span class="font-medium text-red-600">Desconectar</span>
                     </div>
