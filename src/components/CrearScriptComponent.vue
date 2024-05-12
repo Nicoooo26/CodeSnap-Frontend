@@ -4,11 +4,10 @@ import { ref } from 'vue';
 import { useCookies } from 'vue3-cookies';
 
 const emits = defineEmits(['cerrar']);
-const {cookies} = useCookies()
-const token = cookies.get('token')
+const { cookies } = useCookies();
+const token = cookies.get('token');
 const title = ref('');
 let file: File | null = null;
-let fileContent: string | null = null;
 
 const handleFileUpload = (event: any) => {
     file = event.target.files[0];
@@ -16,25 +15,33 @@ const handleFileUpload = (event: any) => {
 
 const crearScript = async () => {
     try {
-        await axios.post('http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/scripts', {
-            idUser: 4,
-            code: 'vale',
-            titulo: title.value,
-        },{headers:{'api-key':`${token}`} });
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const codeContent = reader.result as string; 
+                const base64Content = btoa(codeContent); 
+                enviarScript(base64Content); 
+            };
+            reader.readAsText(file);
+        } else {
+            console.error("No se ha seleccionado ningún archivo.");
+        }
     } catch (error: any) {
         console.error(error);
     }
-   
 };
 
-const enviarContenido = async () => {
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            fileContent = reader.result as string;
-            enviarContenido();
-        };
-        reader.readAsText(file);
+const enviarScript = async (base64Content: string) => {
+    try {
+        console.log(base64Content)
+        await axios.post('http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/scripts', {
+            idUser: 4,
+            code: base64Content,
+            titulo: title.value,
+        }, { headers: { 'api-key': `${token}` } });
+        emits('cerrar');
+    } catch (error: any) {
+        console.error(error);
     }
 };
 </script>

@@ -18,16 +18,20 @@ import AppFooter from '@/components/AppFooter.vue'
 #page-container {
   position: relative;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 #content-wrap {
-  padding-bottom: 2.5rem;  
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 5.5rem; 
 }
 
-#footer {
 
-  bottom: 0;
+#footer {
+  margin-top: auto; 
   width: 100%;
-  height: 5.5rem;    
+  height: 5.5rem;
 }
 </style>

@@ -12,6 +12,7 @@ import InstantaneasView from '@/views/InstantaneasView.vue'
 import SupportView from '@/views/SupportView.vue'
 import ForosInsideView from '@/views/ForosInsideView.vue'
 import { useCookies } from 'vue3-cookies';
+import OnlyScriptView from '@/views/OnlyScriptView.vue'
 
 const {cookies} = useCookies()
 
@@ -45,6 +46,11 @@ const router = createRouter({
           path: '/scripts',
           name: 'scripts',
           component: ScriptsView
+        },
+        {
+          path: '/onlyScript',
+          name: 'onlyScript',
+          component: OnlyScriptView
         },
         {
           path: '/foros',
@@ -96,18 +102,18 @@ let isFirstLoad = true;
 router.beforeEach((to, from, next) => {
   const token = cookies.get('token');
 
-  if (isFirstLoad) {
-    // Si es la primera carga del proyecto
-    if (token) {
-      // Si hay token, redirige a la página de inicio
-      next({ name: 'home' });
-    } else {
-      // Si no hay token, redirige a la página de inicio de sesión
-      next({ name: 'login' });
-    }
-    isFirstLoad = false; // Marca que ya no es la primera carga
+  if (!token && to.name !== 'login') {
+    // Si no hay token y no está en la página de inicio de sesión,
+    // redirige a la página de inicio de sesión
+    next({ name: 'login' });
+  } else if (token && to.name === 'login') {
+    // Si hay token pero está en la página de inicio de sesión,
+    // redirige a la página de inicio
+    next({ name: 'home' });
   } else {
-    // Si no es la primera carga del proyecto, continúa navegando
+    // Si hay token y no está en la página de inicio de sesión,
+    // o si no hay token pero está en la página de inicio de sesión,
+    // permite continuar navegando
     next();
   }
 });
