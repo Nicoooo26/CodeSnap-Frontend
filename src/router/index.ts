@@ -54,7 +54,7 @@ const router = createRouter({
           component: ScriptsView
         },
         {
-          path: '/onlyScript',
+          path: '/onlyScript/:id',
           name: 'onlyScript',
           component: OnlyScriptView
         },

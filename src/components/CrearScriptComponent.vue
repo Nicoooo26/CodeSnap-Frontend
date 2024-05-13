@@ -34,7 +34,7 @@ const crearScript = async () => {
 const enviarScript = async (base64Content: string) => {
     try {
         console.log(base64Content)
-        await axios.post('http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/scripts', {
+        await axios.post('http://localhost/DWES/CodesnapBackend/scripts', {
             idUser: 4,
             code: base64Content,
             titulo: title.value,
@@ -56,13 +56,13 @@ const enviarScript = async (base64Content: string) => {
                 <div class="mb-4">
                     <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Título:</label>
                     <input type="text" id="title" v-model="title"
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                 </div>
                 <div class="mb-4">
                     <label for="file" class="block text-gray-700 text-sm font-bold mb-2">Archivo:</label>
                     <input type="file" id="file" @change="handleFileUpload"
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        accept=".js,.txt,.php,.ts,.sql">
+                        accept=".js,.txt,.php,.ts,.sql" required>
                 </div>
                 <button type="submit"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Subir

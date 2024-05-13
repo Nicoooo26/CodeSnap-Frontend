@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import TabViewComponent from '@/components/TabViewComponent.vue'
-import DialogComponent from '@/components/DialogComponent.vue'
+import UpdateUserComponent from '@/components/UpdateUserComponent.vue';
 import { useCookies } from 'vue3-cookies';
 import axios from 'axios';
 
@@ -22,7 +22,7 @@ const token = cookies.get('token')
 let datos =null
 
 // Hacer la solicitud utilizando Axios
-axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?token=${token}`, {headers:{'api-key':`${token}`} })
+axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, {headers:{'api-key':`${token}`} })
   .then(response => {
     // Manejar la respuesta aquí
     datos=response.data.usuarios[0]
@@ -63,7 +63,7 @@ const numForos = ref(0)
 <template>
   <div>
     <main class="bg-gray-100 bg-opacity-25">
-      <div class="lg:w-8/12 lg:mx-auto mb-8">
+      <div class="lg:w-8/12 lg:mx-auto ">
         <header class="flex flex-wrap items-center p-4 md:py-8">
           <div class="md:w-3/12 md:ml-16">
             <img class="w-20 h-20 md:w-40 md:h-40 object-cover border rounded-full p-1" :src="profilePicture" alt="profile" />
@@ -94,7 +94,7 @@ const numForos = ref(0)
               <h1 class="font-semibold">{{ fullName }}</h1>
               <p class="text-gray-400">{{ joinDate }}</p>
               <span class="underline">{{ location }}</span>
-              <p>{{ fechaNacimiento }}</p>
+              <p v-if="fechaNacimiento!='0000-00-00'">{{ fechaNacimiento }}</p>
               <p>{{ description }}</p>
             </div>
           </div>
@@ -121,11 +121,11 @@ const numForos = ref(0)
               foros
             </li>
           </ul>
-          <TabViewComponent />
+          <TabViewComponent :numscripts="numcodigos" />
         </div>
       </div>
     </main>
-    <DialogComponent v-if="mostrarModal" @cerrar="controlarEmit" />
+    <UpdateUserComponent v-if="mostrarModal" @cerrar="controlarEmit" />
   </div>
 </template>
 
