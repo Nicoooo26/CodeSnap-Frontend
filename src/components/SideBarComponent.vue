@@ -12,7 +12,7 @@ const profilePicture = ref('')
 let datos =null
 
 // Hacer la solicitud utilizando Axios
-axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?token=${token}`, {headers:{'api-key':`${token}`} })
+axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, {headers:{'api-key':`${token}`} })
   .then(response => {
     // Manejar la respuesta aquí
     datos=response.data.usuarios[0]
@@ -143,7 +143,7 @@ axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?token=${to
             <div class="mt-auto">
               <hr class="my-3 border-t border-gray-300" />
               <div class="m-3 flex items-center cursor-pointer p-3 gap-2 rounded border border-gray-300 hover:bg-gray-100">
-                <Avatar :image="profilePicture" shape="circle" />
+                <img :src="profilePicture" class="w-14 h-14 object-cover border rounded-full p-1" />
                 <span class="font-bold">{{username}}</span>
               </div>
             </div>

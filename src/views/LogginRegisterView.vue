@@ -59,7 +59,7 @@ const login = () => {
     usernameVacio.value = false
   }
   if (passwordVacio.value === false && usernameVacio.value === false) {
-    axios.post('http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/auth', {
+    axios.post('http://localhost/DWES/CodesnapBackend/auth', {
       username: usernameLogin.value,
       password: passwordLogin.value
     }).then(response => {
@@ -106,7 +106,7 @@ const register = async () => {
   if (!usernameVacio.value && !usernameError.value && !emailError.value && !emailVacio.value && !passwordVacio.value) {
     try {
       // Lógica para enviar los datos al servidor y manejar la respuesta
-      await axios.post('http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user', {
+      await axios.post('http://localhost/DWES/CodesnapBackend/user', {
         username: usernameRegistro.value,
         password: passwordRegistro.value,
         email: emailRegistro.value

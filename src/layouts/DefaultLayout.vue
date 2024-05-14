@@ -25,7 +25,6 @@ import AppFooter from '@/components/AppFooter.vue'
 #content-wrap {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 5.5rem; 
 }
 
 
