@@ -28,7 +28,8 @@ axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?token=${to
   .catch(error => {
     // Manejar errores aquí
     console.error('Error:', error);
-  });   
+  });
+console.log(id)   
 const profilePicture = ref<string | ArrayBuffer | null>('');
 const username = ref('')
 const fechanacimiento = ref('')

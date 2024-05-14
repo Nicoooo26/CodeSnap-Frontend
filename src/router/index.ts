@@ -13,7 +13,6 @@ import SupportView from '@/views/SupportView.vue'
 import ForosInsideView from '@/views/ForosInsideView.vue'
 import { useCookies } from 'vue3-cookies';
 import OnlyScriptView from '@/views/OnlyScriptView.vue';
-import PhotoView from '@/views/PhotoView.vue';
 const {cookies} = useCookies()
 
 
@@ -31,12 +30,6 @@ const router = createRouter({
           path: '/home',
           name: 'home',
           component: HomeView
-        },
-        {
-          path: '/photo/:photoId',
-          name: 'PhotoView',
-          component: PhotoView,
-          props: true
         },
         {
           path: '/setting',
