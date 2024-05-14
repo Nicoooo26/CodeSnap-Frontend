@@ -1,19 +1,64 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useCookies } from 'vue3-cookies';
+import { ref, computed, watch } from 'vue';
 import axios from 'axios';
 
-const { cookies } = useCookies()
-const token = cookies.get('token')
-const photos = ref([]) // Almacena las fotos obtenidas de la API
+const props = defineProps(['numscripts']);
+const { cookies } = useCookies();
+const token = cookies.get('token');
+const idUser = ref<string>('');
+const scripts = ref<any[]>([]);
+const displayedScripts = ref<any[]>([]);
+const nextScriptIndex = ref(0);
+const scriptsPerPage = 3;
+const photos = ref<any[]>([]);
+ // Almacena las fotos obtenidas de la API
+// Función para ordenar los scripts por fecha de creación más reciente
+const sortScriptsByDate = () => {
+  scripts.value.sort((a, b) => {
+    const dateA = new Date(a.fecha_creacion);
+    const dateB = new Date(b.fecha_creacion);
+    return dateB.getTime() - dateA.getTime();
+  });
+};
 
-axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?token=${token}`, { headers: { 'api-key': `${token}` } })
+const loadMoreScripts = () => {
+  const remainingScripts = scripts.value.slice(nextScriptIndex.value, nextScriptIndex.value + scriptsPerPage);
+  displayedScripts.value.push(...remainingScripts);
+  nextScriptIndex.value += scriptsPerPage;
+};
+
+// Esta función verifica si hay más scripts para mostrar
+const showLoadMoreButton = computed(() => nextScriptIndex.value < props.numscripts);
+watch(scripts, () => {
+  nextScriptIndex.value = 0;
+  displayedScripts.value = [];
+  loadMoreScripts();
+});
+
+axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } })
+  .then(response => {
+    idUser.value = response.data.usuarios[0].id;
+    axios.get(`http://localhost/DWES/CodesnapBackend/scripts?idUser=${idUser.value}`, { headers: { 'api-key': `${token}` } })
+      .then(response => {
+        scripts.value = response.data.scripts;
+        sortScriptsByDate();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+
+axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } })
   .then(response => {
     // Obtener el ID del usuario
     const userId = response.data.usuarios[0].id
 
     // Llamar a la API para obtener las fotos del usuario
-    axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/photos?idUser=${userId}`, { headers: { 'api-key': `${token}` } })
+    axios.get(`http://localhost/DWES/CodesnapBackend/photos?idUser=${userId}`, { headers: { 'api-key': `${token}` } })
       .then(response => {
         // Almacenar las fotos obtenidas
         photos.value = response.data.photos
@@ -27,7 +72,7 @@ axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?token=${to
   });
 
 // Formatear el número de likes
-const formatLikes = (numLikes) => {
+const formatLikes = (numLikes: number) => {
   if (numLikes >= 1000) {
     return `${(numLikes / 1000).toFixed(1)}k`;
   } else {
@@ -38,6 +83,7 @@ const formatLikes = (numLikes) => {
 const eventoClick = () => {
   console.log('eventoClick')
 }
+const subirFoto=()=>{}
 </script>
 
 <template>
@@ -86,18 +132,38 @@ const eventoClick = () => {
         </div>
       </div>
     </TabPanel>
-    <TabPanel>
-
+   <TabPanel>
       <template #header>
         <div class="flex align-items-center gap-2">
           <i class="pi pi-code text-xl md:text-xs"></i>
           <span class="font-bold white-space-nowrap">scripts</span>
         </div>
       </template>
-      <div class="m-0">No existen scripts actualmente</div>
+      <div v-if="props.numscripts === 0" class="m-0">No existen scripts actualmente</div>
+      <div v-else>
+        <ul class="space-y-4">
+          <li v-for="(script, index) in displayedScripts" :key="index" class="border border-gray-300 rounded">
+            <RouterLink :to="`/onlyScript/${script.id}`" class="block">
+              <button class="w-full bg-white text-black px-4 py-2 rounded hover:bg-gray-200 transition-colors">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <p class="font-bold text-xl">{{ script.titulo }}</p>
+                    <p class="text-sm text-gray-600">Hecho por {{ script.username }}</p>
+                  </div>
+                  <p class="text-sm text-gray-600">{{ script.fecha_creacion }}</p>
+                </div>
+              </button>
+            </RouterLink>
+          </li>
+        </ul>
+        <!-- Botón "Mostrar más" -->
+        <button v-if="showLoadMoreButton" @click="loadMoreScripts" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+          Mostrar más
+        </button>
+      </div>
     </TabPanel>
-    <TabPanel>
 
+    <TabPanel>
       <template #header>
         <div class="flex align-items-center gap-2">
           <i class="pi  pi-comments text-xl md:text-xs"></i>

@@ -1,41 +1,85 @@
 <script setup lang="ts">
 import CrearScriptComponent from '@/components/CrearScriptComponent.vue';
-import { ref } from 'vue';
+import axios from 'axios';
+import { ref, onMounted, computed } from 'vue';
+import { useCookies } from 'vue3-cookies';
 
-const mostrarModal = ref(false)
+const mostrarModal = ref(false);
 const abrirModal = () => {
-    mostrarModal.value = true
-}
+    mostrarModal.value = true;
+};
 const cerrarModal = () => {
-    mostrarModal.value = false
-}
+    mostrarModal.value = false;
+};
 const controlarEmit = () => {
-    cerrarModal()
-}
+    cerrarModal();
+};
+const id=ref()
 
+const scripts = ref<any[]>([]);
+const { cookies } = useCookies();
+const token = cookies.get('token');
+
+axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, {headers:{'api-key':`${token}`} })
+  .then(response => {
+    id.value=response.data.usuarios[0].id
+
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });  
+  const sortScriptsByDate = () => {
+  scripts.value.sort((a, b) => {
+    const dateA = new Date(a.fecha_creacion);
+    const dateB = new Date(b.fecha_creacion);
+    return dateB.getTime() - dateA.getTime();
+  });
+};
+
+const obtenerScripts = async () => {
+    try {
+        const response = await axios.get('http://localhost/DWES/CodesnapBackend/scripts', {
+            headers: { 'api-key': `${token}` }
+        });
+        scripts.value = response.data.scripts;
+        sortScriptsByDate();
+    } catch (error) {
+        console.error('Error al obtener los scripts:', error);
+    }
+};
+
+const decodificarBase64 = (cadenaBase64: string) => {
+    return atob(cadenaBase64);
+};
+
+onMounted(() => {
+    obtenerScripts();
+});
+const filteredScripts = computed(() => {
+    return scripts.value.filter(script => script.idUser !== id.value);
+});
 </script>
 
 <template>
     <div class="container mx-auto p-4">
-        <h1 class="text-3xl font-bold mb-4">SCRIPTS</h1>
-        <button @click="abrirModal"
-            class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-4 py-2 rounded-md mb-4 hover:bg-opacity-90">Crear
-            Script</button>
-        <div class="mb-14 ml-4 mr-4 mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- Script 1 -->
-            <div class="bg-gray-100 p-4 rounded-md cursor-pointer hover:bg-gray-200 transition duration-200 ease-in-out">
-                <h2 class="text-xl font-semibold mb-2">Script 1</h2>
-                <p>Fecha de creación: 2024-05-12</p>
-                <p>Usuario: Usuario1</p>
-                <code class="block overflow-hidden whitespace-pre overflow-ellipsis">Linea 1 del código...</code>
-                <code class="block overflow-hidden whitespace-pre overflow-ellipsis">Linea 2 del código...</code>
-            </div>
-
+      <h1 class="text-3xl font-bold mb-8 text-center">Scripts de la Comunidad</h1>
+      <button @click="abrirModal"
+        class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-3 rounded-md mb-8 hover:bg-opacity-90 block mx-auto">Crear Script</button>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Iterar sobre los scripts obtenidos -->
+        <div v-for="script in filteredScripts" :key="script.id" class="bg-white rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl">
+          <RouterLink :to="`/onlyScript/${script.id}`" class="block p-6">
+            <h2 class="text-lg font-semibold mb-4">{{ script.titulo }}</h2>
+            <p class="text-gray-500">{{ new Date(script.fecha_creacion).toLocaleDateString() }}</p>
+            <p class="text-gray-500">Creado por {{ script.username }}</p>
+            <code class="block mt-4 text-gray-700 overflow-hidden whitespace-nowrap overflow-ellipsis">{{ decodificarBase64(script.code).split('\n')[0] }}...</code>
+          </RouterLink>
         </div>
-        <CrearScriptComponent v-if="mostrarModal" @cerrar="controlarEmit" />
+      </div>
+      <CrearScriptComponent v-if="mostrarModal" @cerrar="controlarEmit" />
     </div>
-   
-</template>
+  </template>
+  
 
 <style scoped>
 

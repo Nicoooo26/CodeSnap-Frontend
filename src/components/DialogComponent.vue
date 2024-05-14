@@ -11,7 +11,7 @@ let datos =null
 let id:any = null
 
 // Hacer la solicitud utilizando Axios
-axios.get(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?token=${token}`, {headers:{'api-key':`${token}`} })
+axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, {headers:{'api-key':`${token}`} })
   .then(response => {
     // Manejar la respuesta aquí
     datos=response.data.usuarios[0]
@@ -41,7 +41,7 @@ const nombrecompleto = ref('')
 
 const actualizarUser=()=>{
   console.log(id,username.value,fechanacimiento.value,sexo.value,telefono.value,nombrecompleto.value,descripcion.value,ubicacion.value,profilePicture.value)
-  axios.put(`http://localhost/DWES/CodesnapBackend/CodeSnapBackEnd/user?id=${id}`, {
+  axios.put(`http://localhost/DWES/CodesnapBackend/user?id=${id}`, {
     username: username.value?username.value:null,
     fechanacimiento: fechanacimiento.value,
     sexo: sexo.value?sexo.value:null,

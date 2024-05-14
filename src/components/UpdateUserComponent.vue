@@ -60,17 +60,10 @@ const actualizarUser = () => {
       console.error('Error:', error);
     });
 }
-const MAX_FILE_SIZE_BYTES = 64 * 1024; // 64 KB
 
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement;
   const file: File = (target.files as FileList)[0];
-  
-  // Verificar el tamaño del archivo
-  if (file && file.size > MAX_FILE_SIZE_BYTES) {
-    alert('El archivo es demasiado grande. Por favor, selecciona un archivo de máximo 64 KB.');
-    return;
-  }
 
   const reader = new FileReader();
 
@@ -83,8 +76,6 @@ const handleFileUpload = (event: Event) => {
     reader.readAsDataURL(file); // Leemos el archivo como una URL de datos
   }
 };
-
-// ... el resto de tu código ...
 
 const imageSrc = computed(() => {
   if (typeof profilePicture.value === 'string') {
