@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import CrearForoComponent from '@/components/CrearForoComponent.vue';
 import { ref } from 'vue';
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
+
+
+const showSuccess = () => {
+    toast.add({ severity: 'success', summary: 'Foro creado', detail: 'El foro ha sido creado correctamente', life: 3000 });
+};
 
 const mostrarModal = ref(false)
 
@@ -10,13 +17,17 @@ const abrirModal = () => {
 const cerrarModal = () => {
     mostrarModal.value = false
 }
-const controlarEmit = () => {
+const controlarEmit = (mssg:string) => {
     cerrarModal()
+    if(mssg=='ok'){
+      showSuccess()
+    }
 }
 </script>
 
 <template>
     <div>
+        <Toast />
         <button @click="abrirModal"
             class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-md mt-5">Crear
             Foro</button>
@@ -58,8 +69,8 @@ const controlarEmit = () => {
             <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow overflow-hidden">
                 <img class="object-cover w-full h-60" src="/programacionIcons/cIcon.png" alt="" />
                 <div class="p-5">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">FORO C++</h5>
-                    <RouterLink to="/foros/c++">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">FORO C</h5>
+                    <RouterLink to="/foros/c">
                         <button
                             class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">Entrar</button>
 

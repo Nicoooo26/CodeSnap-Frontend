@@ -28,8 +28,15 @@ const goBack = () => {
 </script>
 
 <template>
-    <button @click="goBack" class="bg-gray-200 px-3 py-1 rounded-lg mb-4">Volver atrás</button>
-    <pre>{{ code }}</pre>
+    <div class="p-6">
+        <button @click="goBack" class="relative bg-gradient-to-r from-green-400 to-blue-500 text-white px-5 py-3 rounded-full shadow-lg mb-4 transition-transform transform hover:scale-105 dark:from-green-600 dark:to-blue-700">
+            <span class="relative z-10">⬅ Volver atrás</span>
+            <div class="absolute inset-0 bg-white opacity-20 rounded-full blur-lg"></div>
+        </button>
+        <pre class="bg-white text-black p-4 rounded-lg shadow-lg border border-gray-300 dark:bg-black dark:text-white dark:border-gray-700 overflow-auto transition-all">
+            {{ code }}
+        </pre>
+    </div>
 </template>
 
 <style scoped></style>

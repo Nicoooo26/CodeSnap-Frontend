@@ -1,41 +1,74 @@
 <script setup lang="ts">
+import axios from 'axios';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ref } from 'vue';
-import ForosPorLenguajeComponent from '@/components/ForosPorLenguajeComponent.vue';
+import { useCookies } from 'vue3-cookies';
 
+const { cookies } = useCookies();
+const token = cookies.get('token');
 const route = useRoute();
 const router = useRouter();
 
 const lenguaje = route.params.lenguaje;
-const tituloBuscado = ref('');
+const foros = ref<any[]>([]);
+const id = ref();
+const searchQuery = ref('');
 
-const goBack=()=> {
+const goBack = () => {
   router.go(-1);
 }
+
+axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } })
+  .then(response => {
+    id.value = response.data.usuarios[0].id;
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  }
+);
+
+const obtenerForos = async () => {
+  try {
+    const response = await axios.get(`http://localhost/DWES/CodesnapBackend/forums?tipo=${lenguaje}`, {
+      headers: { 'api-key': `${token}` }
+    });
+    foros.value = response.data.foros.sort((a:any, b:any) =>new Date(b.fecha_creacion).getTime() - new Date(a.fecha_creacion).getTime());
+  } catch (error) {
+    console.error('Error al obtener los scripts:', error);
+  }
+};
+
+onMounted(() => {
+  obtenerForos();
+});
+
+const filteredForos = computed(() => {
+  return foros.value.filter(foro => {
+    return foro.idUser !== id.value && foro.title.toLowerCase().includes(searchQuery.value.toLowerCase());
+  });
+});
+
 </script>
 
 <template>
-    <div class="bg-gray-200 p-4">
-      <!-- Botón Atrás -->
-      <button @click="goBack" class="absolute top-22 left-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        Atrás
-      </button>
-      <!-- Título centrado -->
-      <h1 class="text-xl font-bold text-center uppercase mb-4">{{ lenguaje }}</h1>
-      
-      <!-- Formulario de búsqueda -->
-      <form class="max-w-md mx-auto">
-        <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Buscar</label>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <span class="pi pi-search"></span>
-          </div>
-          <input type="search" id="default-search" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Buscar..." required v-model="tituloBuscado"/>
-          <button type="submit" class="text-white absolute top-1/2 transform -translate-y-1/2 right-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Buscar</button>
-        </div>
-      </form>
+  <div>
+    <div class="py-4 px-6 flex flex-col items-center shadow-md">
+      <h1 class="text-xl font-semibold text-gray-800 uppercase">FOROS {{ lenguaje }}</h1>
+      <button @click="goBack"
+        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold mt-4 py-2 px-4 mb-4 rounded transition-colors duration-300 ease-in-out">Volver</button>
+        <input v-model="searchQuery" type="text" placeholder="Buscar por título..."
+      class="mb-8 px-4 py-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
     </div>
-    <ForosPorLenguajeComponent/>
-  </template>
-  
-  
+    <div class="bg-white shadow-md rounded-lg p-6">
+    <div v-for="foro in filteredForos" :key="foro.id" class="mb-6">
+      <RouterLink :to="`/onlyForo/${foro.id}`" class="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-300">
+        <h2 class="text-xl font-semibold mb-2">{{ foro.title }}</h2>
+        <p class="text-gray-500 text-sm mb-1">Pregunta: {{ (foro.question).slice(0,50)}}...</p>
+        <p class="text-gray-500 text-sm mb-1">Creado el {{ foro.fecha_creacion }}</p>
+        <p class="text-gray-500 text-sm mb-1">Lenguaje: {{ foro.tipo }}</p>
+        <p class="text-gray-500 text-sm">Respuestas: {{ foro.response_number }} </p>
+      </RouterLink>
+    </div>
+  </div>
+  </div>
+</template>

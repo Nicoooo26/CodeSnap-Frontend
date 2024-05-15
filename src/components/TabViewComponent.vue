@@ -114,7 +114,7 @@ const subirFoto=()=>{}
             <a :href="`#`">
               <article class="post bg-gray-100 text-white relative pb-full md:mb-6">
                 <!-- Muestra la imagen de la foto -->
-                <img class="w-full h-full absolute left-0 top-0 object-cover" :src="photo.route"
+                <img class="w-full h-full absolute left-0 top-0 object-cover" :src="photo.foto"
                   :alt="`image-${photo.id}`" @click="eventoClick" />
                 <!-- Muestra el número de likes -->
                 <div class="overlay bg-gray-800 bg-opacity-25 w-full h-full absolute left-0 top-0 hidden">
@@ -139,7 +139,7 @@ const subirFoto=()=>{}
           <span class="font-bold white-space-nowrap">scripts</span>
         </div>
       </template>
-      <div v-if="props.numscripts === 0" class="m-0">No existen scripts actualmente</div>
+      <div v-if="props.numscripts == 0" class="m-0">No existen scripts actualmente</div>
       <div v-else>
         <ul class="space-y-4">
           <li v-for="(script, index) in displayedScripts" :key="index" class="border border-gray-300 rounded">
