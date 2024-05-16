@@ -2,6 +2,12 @@
 import axios from 'axios';
 import { ref } from 'vue';
 import { useCookies } from 'vue3-cookies';
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
+
+const showWarn = () => {
+    toast.add({ severity: 'warn', summary: 'Warning', detail: 'Rellene todos los campos porfavor', life: 3000 });
+};
 
 const emits = defineEmits(['cerrar']);
 const { cookies } = useCookies();
@@ -26,7 +32,7 @@ const crearScript = async () => {
       };
       reader.readAsText(file);
     } else {
-      console.error("No se ha seleccionado ningún archivo.");
+      showWarn()
     }
   } catch (error: any) {
     console.error(error);
@@ -35,6 +41,11 @@ const crearScript = async () => {
 
 const enviarScript = async (base64Content: string) => {
   try {
+    // Validación de campos
+    if (!title.value || !base64Content ) {
+      showWarn()
+      return;
+    }
     // Realiza el GET para obtener los datos del usuario
     const response = await axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } });
     const usuario = response.data.usuarios[0];
@@ -47,7 +58,7 @@ const enviarScript = async (base64Content: string) => {
       titulo: title.value,
       username: username.value
     }, { headers: { 'api-key': `${token}` } });
-    emits('cerrar');
+    emits('cerrar','ok');
   } catch (error: any) {
     console.error(error);
   }
@@ -56,6 +67,7 @@ const enviarScript = async (base64Content: string) => {
 
 <template>
   <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <Toast />
     <div class="modal-content bg-white p-6 rounded-md shadow-lg relative">
       <h2 class="text-xl font-semibold mb-4">Insertar Código</h2>
       <span class="close absolute top-2 right-2 text-2xl cursor-pointer hover:text-red-500"
@@ -64,14 +76,12 @@ const enviarScript = async (base64Content: string) => {
         <div class="mb-4">
           <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Título:</label>
           <input type="text" id="title" v-model="title"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required>
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
         </div>
         <div class="mb-4">
           <label for="file" class="block text-gray-700 text-sm font-bold mb-2">Archivo:</label>
           <div class="relative">
-            <input type="file" id="file" @change="handleFileUpload" class="hidden" accept=".js,.txt,.php,.ts,.sql"
-              required>
+            <input type="file" id="file" @change="handleFileUpload" class="hidden" accept=".js,.txt,.php,.ts,.sql">
             <label for="file"
               class="cursor-pointer bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
               <span>Seleccionar Archivo</span>

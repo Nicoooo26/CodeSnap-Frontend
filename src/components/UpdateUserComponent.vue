@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { useCookies } from 'vue3-cookies';
 import axios from 'axios';
+import { emit } from 'process';
 
 const emits = defineEmits(['cerrar'])
 
@@ -52,8 +53,7 @@ const actualizarUser = () => {
 
   }, { headers: { 'api-key': `${token}` } })
     .then(response => {
-      console.log(response)
-      location.reload()
+      emits('cerrar','ok')
     })
     .catch(error => {
       // Manejar errores aquí

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import TabViewComponent from '@/components/TabViewComponent.vue'
 import UpdateUserComponent from '@/components/UpdateUserComponent.vue';
 import { useCookies } from 'vue3-cookies';
@@ -13,8 +13,11 @@ const abrirModal = () => {
 const cerrarModal = () => {
   mostrarModal.value = false
 }
-const controlarEmit = () => {
+const controlarEmit = (mssg:string) => {
   cerrarModal()
+  if(mssg=='ok'){
+      obtenerDatosUser()
+    }
 }
 
 const {cookies} = useCookies()
@@ -22,7 +25,8 @@ const token = cookies.get('token')
 let datos =null
 
 // Hacer la solicitud utilizando Axios
-axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, {headers:{'api-key':`${token}`} })
+const obtenerDatosUser = ()=>{
+  axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, {headers:{'api-key':`${token}`} })
   .then(response => {
     // Manejar la respuesta aquí
     datos=response.data.usuarios[0]
@@ -43,8 +47,9 @@ axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, {headers:
   .catch(error => {
     // Manejar errores aquí
     console.error('Error:', error);
-  });   
-
+  }); 
+}  
+onMounted(obtenerDatosUser)
 
 const profilePicture = ref('')
 const username = ref('')
@@ -64,7 +69,7 @@ const numForos = ref(0)
   <div>
     <main class="bg-gray-100 bg-opacity-25">
       <div class="lg:w-8/12 lg:mx-auto ">
-        <header class="flex flex-wrap items-center p-4 md:py-8">
+        <header class="flex flex-wrap items-center p-4 md:py-2">
           <div class="md:w-3/12 md:ml-16">
             <img class="w-20 h-20 md:w-40 md:h-40 object-cover border rounded-full p-1" :src="profilePicture" alt="profile" />
           </div>
@@ -121,7 +126,7 @@ const numForos = ref(0)
               foros
             </li>
           </ul>
-          <TabViewComponent :numscripts="numcodigos" />
+          <TabViewComponent @cerrar="obtenerDatosUser" />
         </div>
       </div>
     </main>

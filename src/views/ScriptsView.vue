@@ -3,6 +3,13 @@ import CrearScriptComponent from '@/components/CrearScriptComponent.vue';
 import axios from 'axios';
 import { ref, onMounted, computed } from 'vue';
 import { useCookies } from 'vue3-cookies';
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
+
+
+const showSuccess = () => {
+    toast.add({ severity: 'success', summary: 'Script creado', detail: 'El script ha sido creado correctamente', life: 3000 });
+};
 
 const mostrarModal = ref(false);
 const abrirModal = () => {
@@ -11,9 +18,11 @@ const abrirModal = () => {
 const cerrarModal = () => {
   mostrarModal.value = false;
 };
-const controlarEmit = () => {
+const controlarEmit = (mssg:string) => {
   cerrarModal();
-
+  if(mssg=='ok'){
+      showSuccess()
+    }
 };
 const id = ref();
 const searchQuery = ref('');
@@ -68,6 +77,7 @@ const filteredScripts = computed(() => {
 
 <template>
   <div class="container mx-auto p-4">
+    <Toast />
     <h1 class="text-3xl font-bold mb-8 text-center">Scripts de la Comunidad</h1>
     <button @click="abrirModal"
       class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-3 rounded-md mb-8 hover:bg-opacity-90 block mx-auto">Subir
