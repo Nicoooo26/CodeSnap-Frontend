@@ -11,8 +11,9 @@ import ForosView from '@/views/ForosView.vue'
 import InstantaneasView from '@/views/InstantaneasView.vue'
 import SupportView from '@/views/SupportView.vue'
 import ForosInsideView from '@/views/ForosInsideView.vue'
-import { useCookies } from 'vue3-cookies';
 import OnlyScriptView from '@/views/OnlyScriptView.vue';
+import OnlyForoView from '@/views/OnlyForoView.vue'
+import { useCookies } from 'vue3-cookies';
 const {cookies} = useCookies()
 
 
@@ -50,6 +51,11 @@ const router = createRouter({
           path: '/onlyScript/:id',
           name: 'onlyScript',
           component: OnlyScriptView
+        },
+        {
+          path: '/onlyForo/:id',
+          name: 'onlyForo',
+          component: OnlyForoView
         },
         {
           path: '/foros',

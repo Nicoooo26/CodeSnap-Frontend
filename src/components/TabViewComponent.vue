@@ -1,18 +1,27 @@
 <script setup lang="ts">
-import { useCookies } from 'vue3-cookies';
-import { ref, computed, watch } from 'vue';
 import axios from 'axios';
+import { useCookies } from 'vue3-cookies';
+import { ref, computed, watch, onMounted } from 'vue';
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
 
-const props = defineProps(['numscripts']);
+const confirm = useConfirm();
+const toast = useToast();
 const { cookies } = useCookies();
 const token = cookies.get('token');
-const idUser = ref<string>('');
+const numScripts = ref()
+const numForos = ref()
 const scripts = ref<any[]>([]);
 const displayedScripts = ref<any[]>([]);
 const nextScriptIndex = ref(0);
-const scriptsPerPage = 3;
+const scriptsPerPage = 2;
 const photos = ref<any[]>([]);
+<<<<<<< HEAD
 // Almacena las fotos obtenidas de la API
+=======
+const foros = ref<any[]>([]);
+
+>>>>>>> 73f2e22d946980f5713ea24ca93d43ad8b62e986
 // Función para ordenar los scripts por fecha de creación más reciente
 const sortScriptsByDate = () => {
   scripts.value.sort((a, b) => {
@@ -29,48 +38,84 @@ const loadMoreScripts = () => {
 };
 
 // Esta función verifica si hay más scripts para mostrar
-const showLoadMoreButton = computed(() => nextScriptIndex.value < props.numscripts);
+const showLoadMoreButton = computed(() => nextScriptIndex.value < numScripts.value);
 watch(scripts, () => {
   nextScriptIndex.value = 0;
   displayedScripts.value = [];
   loadMoreScripts();
 });
 
-axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } })
-  .then(response => {
-    idUser.value = response.data.usuarios[0].id;
-    axios.get(`http://localhost/DWES/CodesnapBackend/scripts?idUser=${idUser.value}`, { headers: { 'api-key': `${token}` } })
+const obtenerScripts = async () => {
+  try {
+    await axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } })
       .then(response => {
-        scripts.value = response.data.scripts;
-        sortScriptsByDate();
+        const userId = response.data.usuarios[0].id
+        numScripts.value = response.data.usuarios[0].numcodigo
+        axios.get(`http://localhost/DWES/CodesnapBackend/scripts?idUser=${userId}`, { headers: { 'api-key': `${token}` } })
+          .then(response => {
+            scripts.value = response.data.scripts;
+            sortScriptsByDate();
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
       })
       .catch(error => {
         console.error('Error:', error);
       });
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
-
-axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } })
-  .then(response => {
-    // Obtener el ID del usuario
-    const userId = response.data.usuarios[0].id
-
-    // Llamar a la API para obtener las fotos del usuario
-    axios.get(`http://localhost/DWES/CodesnapBackend/photos?idUser=${userId}`, { headers: { 'api-key': `${token}` } })
+  } catch (e) {
+    console.log(e)
+  }
+}
+const obtenerForos = async () => {
+  try {
+    await axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } })
       .then(response => {
-        // Almacenar las fotos obtenidas
-        photos.value = response.data.photos
+        const userId = response.data.usuarios[0].id
+        numForos.value = response.data.usuarios[0].foroscreados
+        axios.get(`http://localhost/DWES/CodesnapBackend/forums?idUser=${userId}`, { headers: { 'api-key': `${token}` } })
+          .then(response => {
+            foros.value = response.data.foros;
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
       })
       .catch(error => {
-        console.error('Error al obtener las fotos:', error);
+        console.error('Error:', error);
       });
-  })
-  .catch(error => {
-    console.error('Error al obtener el usuario:', error);
-  });
+  } catch (e) {
+    console.log(e)
+  }
+}
 
+
+const obtenerFotos = async () => {
+  await axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } })
+    .then(response => {
+      // Obtener el ID del usuario
+      const userId = response.data.usuarios[0].id
+
+      // Llamar a la API para obtener las fotos del usuario
+      axios.get(`http://localhost/DWES/CodesnapBackend/photos?idUser=${userId}`, { headers: { 'api-key': `${token}` } })
+        .then(response => {
+          // Almacenar las fotos obtenidas
+          photos.value = response.data.photos
+        })
+        .catch(error => {
+          console.error('Error al obtener las fotos:', error);
+        });
+    })
+    .catch(error => {
+      console.error('Error al obtener el usuario:', error);
+    });
+}
+const cargarDatos = async () => {
+  await obtenerScripts()
+  await obtenerFotos()
+  await obtenerForos()
+};
+onMounted(cargarDatos)
 // Formatear el número de likes
 const formatLikes = (numLikes: number) => {
   if (numLikes >= 1000) {
@@ -79,11 +124,38 @@ const formatLikes = (numLikes: number) => {
     return numLikes.toString();
   }
 }
+<<<<<<< HEAD
 //------------------------Subir foto-------------------------------
 const showModal = ref(false);
 const selectedFile = ref(null);
 const imagen = ref<string | ArrayBuffer | null>('');
 const descripcion = ref('');
+=======
+const emits = defineEmits(['cerrar'])
+const eliminarScript = (idParam: any) => {
+  confirm.require({
+    message: '¿Deseas eliminar este script?',
+    header: 'Confirmación',
+    icon: 'pi pi-info-circle',
+    rejectLabel: 'Cancelar',
+    acceptLabel: 'Eliminar',
+    rejectClass: 'p-button-secondary p-button-outlined',
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      try {
+        await axios.delete(`http://localhost/DWES/CodesnapBackend/scripts?id=${idParam}`, { headers: { 'api-key': `${token}` } })
+      } catch (e) {
+        console.log(e)
+      }
+      obtenerScripts()
+      emits('cerrar')
+      toast.add({ severity: 'info', summary: 'Confirmación', detail: 'Script eliminado', life: 3000 });
+    },
+    reject: () => { }
+  });
+
+}
+>>>>>>> 73f2e22d946980f5713ea24ca93d43ad8b62e986
 
 const handleFileChange = (event: any) => {
   const file = event.target.files[0];
@@ -122,11 +194,20 @@ const SavePhoto = () => {
       console.error('Error:', error);
     });
 }
+<<<<<<< HEAD
 
 </script>
 
 <template>
   <input type="file" id="fileInput2" style="display: none" @change="handleFileChange">
+=======
+const subirFoto = () => { }
+</script>
+
+<template>
+  <Toast />
+  <ConfirmDialog></ConfirmDialog>
+>>>>>>> 73f2e22d946980f5713ea24ca93d43ad8b62e986
   <TabView class="space-x-12 uppercase tracking-widest font-semibold text-xs text-gray-600 border-t">
     <TabPanel>
       <template #header>
@@ -164,9 +245,15 @@ const SavePhoto = () => {
           <div class="w-1/3 p-px md:px-3">
             <a :href="`#`">
               <article class="post bg-gray-200 text-white relative md:mb-6">
+<<<<<<< HEAD
                 <label for="fileInput2"
                   class="w-full h-full flex justify-center items-center bg-gray-300 rounded-full cursor-pointer">
                   <input type="file" id="fileInput2" style="display: none" @change="handleFileChange">
+=======
+                <!-- Botón para subir foto -->
+                <button @click="subirFoto"
+                  class="w-full h-full flex justify-center items-center bg-gray-300 rounded-full">
+>>>>>>> 73f2e22d946980f5713ea24ca93d43ad8b62e986
                   <svg xmlns="http://www.w3.org/2000/svg" width="200" height="300" fill="currentColor"
                     class="bi bi-plus-circle-dotted text-gray-500 text-7xl" viewBox="0 0 16 16">
                     <path
@@ -181,7 +268,12 @@ const SavePhoto = () => {
             <router-link :to="{ name: 'instantaneas', params: { id: photo.id }}">
               <article class="post bg-gray-100 text-white relative pb-full md:mb-6">
                 <!-- Muestra la imagen de la foto -->
+<<<<<<< HEAD
                 <img class="w-full h-full absolute left-0 top-0 object-cover" :src="photo.foto" :alt="`image-${photo.id}`" />
+=======
+                <img class="w-full h-full absolute left-0 top-0 object-cover" :src="photo.foto"
+                  :alt="`image-${photo.id}`" @click="eventoClick" />
+>>>>>>> 73f2e22d946980f5713ea24ca93d43ad8b62e986
                 <!-- Muestra el número de likes -->
                 <div class="overlay bg-gray-800 bg-opacity-25 w-full h-full absolute left-0 top-0 hidden">
                   <div class="flex justify-center items-center space-x-4 h-full">
@@ -199,27 +291,36 @@ const SavePhoto = () => {
       </div>
     </TabPanel>
     <TabPanel>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 73f2e22d946980f5713ea24ca93d43ad8b62e986
       <template #header>
         <div class="flex align-items-center gap-2">
           <i class="pi pi-code text-xl md:text-xs"></i>
           <span class="font-bold white-space-nowrap">scripts</span>
         </div>
       </template>
-      <div v-if="props.numscripts === 0" class="m-0">No existen scripts actualmente</div>
+      <div v-if="numScripts == 0" class="m-0">No existen scripts actualmente</div>
       <div v-else>
         <ul class="space-y-4">
           <li v-for="(script, index) in displayedScripts" :key="index" class="border border-gray-300 rounded">
-            <RouterLink :to="`/onlyScript/${script.id}`" class="block">
-              <button class="w-full bg-white text-black px-4 py-2 rounded hover:bg-gray-200 transition-colors">
-                <div class="flex justify-between items-center">
-                  <div>
-                    <p class="font-bold text-xl">{{ script.titulo }}</p>
-                    <p class="text-sm text-gray-600">Hecho por {{ script.username }}</p>
+            <div class="flex items-center justify-between">
+              <RouterLink :to="`/onlyScript/${script.id}`" class="flex-1">
+                <button
+                  class="w-full bg-white text-black px-4 py-2 rounded hover:bg-gray-200 transition-colors relative">
+                  <div class="flex justify-between items-center">
+                    <div>
+                      <p class="font-bold text-xl">{{ script.titulo }}</p>
+                      <p class="text-sm text-gray-600">Hecho por {{ script.username }}</p>
+                    </div>
+                    <p class="text-sm text-gray-600">{{ script.fecha_creacion }}</p>
                   </div>
-                  <p class="text-sm text-gray-600">{{ script.fecha_creacion }}</p>
-                </div>
-              </button>
-            </RouterLink>
+                </button>
+              </RouterLink>
+              <button @click="eliminarScript(script.id)"
+                class="w-16 h-16 text-gray-600 hover:text-red-600 transition-colors pi pi-trash ml-4"></button>
+            </div>
           </li>
         </ul>
         <!-- Botón "Mostrar más" -->
@@ -229,15 +330,39 @@ const SavePhoto = () => {
         </button>
       </div>
     </TabPanel>
-
     <TabPanel>
+
       <template #header>
         <div class="flex align-items-center gap-2">
-          <i class="pi  pi-comments text-xl md:text-xs"></i>
+          <i class="pi pi-code text-xl md:text-xs"></i>
           <span class="font-bold white-space-nowrap">foros</span>
         </div>
       </template>
-      <div class="m-0">No existen foros actualmente</div>
+      <div v-if="numForos == 0" class="m-0">No existen foros actualmente</div>
+      <div v-else>
+        <div v-for="(foro, index) in foros" :key="index" class="my-4">
+  <div class="rounded-lg shadow-md overflow-hidden bg-white">
+    <RouterLink :to="`/onlyForo/${foro.id}`">
+      <button class="w-full py-4 px-6 flex justify-between items-center bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold rounded-t-lg">
+        <div>
+          <p class="text-lg font-semibold">{{ foro.title }}</p>
+          <p class="text-sm text-gray-200">{{ foro.question.length > 20 ? foro.question.slice(0, 20) + '...' : foro.question }}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-200">{{ foro.fecha_creacion }}</p>
+          <p class="text-sm text-gray-200">{{ foro.tipo }}</p>
+          <p class="text-sm text-gray-200">Numero de respuestas: {{ foro.response_number }}</p>
+        </div>
+      </button>
+    </RouterLink>
+    <button @click="eliminarScript(foro.id)" class="w-full py-2 px-6 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-b-lg">
+      Eliminar
+    </button>
+  </div>
+</div>
+
+
+      </div>
     </TabPanel>
   </TabView>
 </template>
