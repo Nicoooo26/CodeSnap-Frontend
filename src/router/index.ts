@@ -62,7 +62,7 @@ const router = createRouter({
           component: ForosInsideView,
         },
         {
-          path: '/instantaneas',
+          path: '/instantaneas/:id',
           name: 'instantaneas',
           component: InstantaneasView
         },

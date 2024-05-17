@@ -52,7 +52,7 @@ const actualizarUser = () => {
 
   }, { headers: { 'api-key': `${token}` } })
     .then(response => {
-      console.log(response)
+      emits('cerrar','ok')
       location.reload()
     })
     .catch(error => {
@@ -106,7 +106,6 @@ const deletePhoto = () => {
             <label for="fileInput"
               class="px-4 py-2 rounded bg-blue-500 text-white cursor-pointer hover:bg-blue-600 focus:outline-none transition-colors">
               Cambiar foto </label>
-
             <input type="button" id="borrarFoto" @click="deletePhoto" />
             <label for="borrarFoto"
               class="px-4 py-2 rounded bg-blue-500 text-white cursor-pointer hover:bg-blue-600 focus:outline-none transition-colors">
