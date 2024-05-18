@@ -2,7 +2,6 @@
 import { ref, computed } from 'vue'
 import { useCookies } from 'vue3-cookies';
 import axios from 'axios';
-import { emit } from 'process';
 
 const emits = defineEmits(['cerrar'])
 
@@ -54,10 +53,6 @@ const actualizarUser = () => {
   }, { headers: { 'api-key': `${token}` } })
     .then(response => {
       emits('cerrar','ok')
-<<<<<<< HEAD
-      location.reload()
-=======
->>>>>>> 73f2e22d946980f5713ea24ca93d43ad8b62e986
     })
     .catch(error => {
       // Manejar errores aquí
@@ -110,6 +105,7 @@ const deletePhoto = () => {
             <label for="fileInput"
               class="px-4 py-2 rounded bg-blue-500 text-white cursor-pointer hover:bg-blue-600 focus:outline-none transition-colors">
               Cambiar foto </label>
+
             <input type="button" id="borrarFoto" @click="deletePhoto" />
             <label for="borrarFoto"
               class="px-4 py-2 rounded bg-blue-500 text-white cursor-pointer hover:bg-blue-600 focus:outline-none transition-colors">

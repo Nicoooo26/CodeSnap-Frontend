@@ -16,12 +16,9 @@ const displayedScripts = ref<any[]>([]);
 const nextScriptIndex = ref(0);
 const scriptsPerPage = 2;
 const photos = ref<any[]>([]);
-<<<<<<< HEAD
-// Almacena las fotos obtenidas de la API
-=======
 const foros = ref<any[]>([]);
+const idUser = ref<string>('');
 
->>>>>>> 73f2e22d946980f5713ea24ca93d43ad8b62e986
 // Función para ordenar los scripts por fecha de creación más reciente
 const sortScriptsByDate = () => {
   scripts.value.sort((a, b) => {
@@ -94,10 +91,10 @@ const obtenerFotos = async () => {
   await axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } })
     .then(response => {
       // Obtener el ID del usuario
-      const userId = response.data.usuarios[0].id
+      idUser.value = response.data.usuarios[0].id
 
       // Llamar a la API para obtener las fotos del usuario
-      axios.get(`http://localhost/DWES/CodesnapBackend/photos?idUser=${userId}`, { headers: { 'api-key': `${token}` } })
+      axios.get(`http://localhost/DWES/CodesnapBackend/photos?idUser=${idUser.value}`, { headers: { 'api-key': `${token}` } })
         .then(response => {
           // Almacenar las fotos obtenidas
           photos.value = response.data.photos
@@ -124,13 +121,6 @@ const formatLikes = (numLikes: number) => {
     return numLikes.toString();
   }
 }
-<<<<<<< HEAD
-//------------------------Subir foto-------------------------------
-const showModal = ref(false);
-const selectedFile = ref(null);
-const imagen = ref<string | ArrayBuffer | null>('');
-const descripcion = ref('');
-=======
 const emits = defineEmits(['cerrar'])
 const eliminarScript = (idParam: any) => {
   confirm.require({
@@ -155,7 +145,35 @@ const eliminarScript = (idParam: any) => {
   });
 
 }
->>>>>>> 73f2e22d946980f5713ea24ca93d43ad8b62e986
+const eliminarForo = (idParam: any) => {
+  confirm.require({
+    message: '¿Deseas eliminar este foro?',
+    header: 'Confirmación',
+    icon: 'pi pi-info-circle',
+    rejectLabel: 'Cancelar',
+    acceptLabel: 'Eliminar',
+    rejectClass: 'p-button-secondary p-button-outlined',
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      try {
+        await axios.delete(`http://localhost/DWES/CodesnapBackend/forums?id=${idParam}`, { headers: { 'api-key': `${token}` } })
+      } catch (e) {
+        console.log(e)
+      }
+      obtenerForos()
+      emits('cerrar')
+      toast.add({ severity: 'info', summary: 'Confirmación', detail: 'Foro eliminado', life: 3000 });
+    },
+    reject: () => { }
+  });
+
+}
+
+//------------------------Subir foto-------------------------------
+const showModal = ref(false);
+const selectedFile = ref(null);
+const imagen = ref<string | ArrayBuffer | null>('');
+const descripcion = ref('');
 
 const handleFileChange = (event: any) => {
   const file = event.target.files[0];
@@ -188,26 +206,19 @@ const SavePhoto = () => {
     .then(response => {
       console.log(response);
       showModal.value = false;
-      // location.reload();
+      obtenerFotos()
+      emits('cerrar')
     })
     .catch(error => {
       console.error('Error:', error);
     });
 }
-<<<<<<< HEAD
-
-</script>
-
-<template>
-  <input type="file" id="fileInput2" style="display: none" @change="handleFileChange">
-=======
-const subirFoto = () => { }
 </script>
 
 <template>
   <Toast />
   <ConfirmDialog></ConfirmDialog>
->>>>>>> 73f2e22d946980f5713ea24ca93d43ad8b62e986
+  <input type="file" id="fileInput2" style="display: none" @change="handleFileChange">
   <TabView class="space-x-12 uppercase tracking-widest font-semibold text-xs text-gray-600 border-t">
     <TabPanel>
       <template #header>
@@ -245,15 +256,9 @@ const subirFoto = () => { }
           <div class="w-1/3 p-px md:px-3">
             <a :href="`#`">
               <article class="post bg-gray-200 text-white relative md:mb-6">
-<<<<<<< HEAD
                 <label for="fileInput2"
                   class="w-full h-full flex justify-center items-center bg-gray-300 rounded-full cursor-pointer">
                   <input type="file" id="fileInput2" style="display: none" @change="handleFileChange">
-=======
-                <!-- Botón para subir foto -->
-                <button @click="subirFoto"
-                  class="w-full h-full flex justify-center items-center bg-gray-300 rounded-full">
->>>>>>> 73f2e22d946980f5713ea24ca93d43ad8b62e986
                   <svg xmlns="http://www.w3.org/2000/svg" width="200" height="300" fill="currentColor"
                     class="bi bi-plus-circle-dotted text-gray-500 text-7xl" viewBox="0 0 16 16">
                     <path
@@ -268,12 +273,7 @@ const subirFoto = () => { }
             <router-link :to="{ name: 'instantaneas', params: { id: photo.id }}">
               <article class="post bg-gray-100 text-white relative pb-full md:mb-6">
                 <!-- Muestra la imagen de la foto -->
-<<<<<<< HEAD
                 <img class="w-full h-full absolute left-0 top-0 object-cover" :src="photo.foto" :alt="`image-${photo.id}`" />
-=======
-                <img class="w-full h-full absolute left-0 top-0 object-cover" :src="photo.foto"
-                  :alt="`image-${photo.id}`" @click="eventoClick" />
->>>>>>> 73f2e22d946980f5713ea24ca93d43ad8b62e986
                 <!-- Muestra el número de likes -->
                 <div class="overlay bg-gray-800 bg-opacity-25 w-full h-full absolute left-0 top-0 hidden">
                   <div class="flex justify-center items-center space-x-4 h-full">
@@ -291,10 +291,7 @@ const subirFoto = () => { }
       </div>
     </TabPanel>
     <TabPanel>
-<<<<<<< HEAD
-=======
 
->>>>>>> 73f2e22d946980f5713ea24ca93d43ad8b62e986
       <template #header>
         <div class="flex align-items-center gap-2">
           <i class="pi pi-code text-xl md:text-xs"></i>
@@ -355,7 +352,7 @@ const subirFoto = () => { }
         </div>
       </button>
     </RouterLink>
-    <button @click="eliminarScript(foro.id)" class="w-full py-2 px-6 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-b-lg">
+    <button @click="eliminarForo(foro.id)" class="w-full py-2 px-6 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-b-lg">
       Eliminar
     </button>
   </div>

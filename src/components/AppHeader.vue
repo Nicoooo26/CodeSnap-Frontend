@@ -51,24 +51,24 @@ const toggle = (event: Event) => {
 
 </script>
 <template>
-  <nav class="bg-white dark:bg-gray-900 border-b border-gray-700">
+  <nav class="bg-stone-500 dark:bg-stone-800 border-b border-stone-700 transition-colors duration-300">
     <div class="max-w-screen-xl flex items-center justify-between mx-auto p-4">
       <div class="flex items-center space-x-3 rtl:space-x-reverse">
-        <RouterLink to="/home" class="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src="/logo.jpg" class="h-8 logoNavbar rounded-lg" alt="CodeSnap Logo" />
-          <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">CodeSnap</span>
+        <RouterLink to="/home" class="flex items-center space-x-3 rtl:space-x-reverse transition-colors duration-300 hover:text-stone-400 dark:hover:text-stone-200">
+          <img src="/logo.jpg" class="h-8 logoNavbar rounded-lg transition-opacity duration-300 hover:opacity-75" alt="CodeSnap Logo" />
+          <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-stone-400">CodeSnap</span>
         </RouterLink>
       </div>
       <div class="flex items-center md:order-2 space-x-4 md:space-x-5 rtl:space-x-reverse">
         <div class="card flex justify-content-center">
-          <Button type="button" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" class=""> <Avatar icon="pi pi-user" class="mr-2 bg-gray-50 border border-gray-800 dark:border-gray-100" size="large" shape="circle" /></Button>
+          <Button type="button" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" class=""> <Avatar icon="pi pi-user" class="mr-2 bg-stone-400 hover:bg-stone-600 border border-stone-800 dark:border-stone-100" size="large" shape="circle" /></Button>
           <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
         </div>
-        <button @click="toggleDark()" class="top-4 right-4 border border-gray-500 dark:border-gray-500 dark:bg-gray-800 rounded-full px-3 py-2">
-          <span class="text-white pi pi-moon" v-if="isDark"></span>
-          <span class="text-dark pi pi-sun" v-else></span>
+        <button @click="toggleDark()" class="top-4 right-4  dark:bg-stone-800 rounded-full px-3 py-2 transition-colors duration-300 ease-in-out hover:bg-stone-600 dark:hover:bg-stone-700">
+          <span class="text-white pi pi-sun" v-if="isDark"></span>
+          <span class="text-dark pi pi-moon" v-else></span>
         </button>
-        <Button class="dark:text-white pi pi-bars border border-gray-500 dark:bg-gray-800 px-2 py-2" @click="visible = true" />
+        <Button class="dark:text-white pi pi-bars px-2 py-2 transition-colors duration-300 ease-in-out hover:bg-stone-600 dark:hover:bg-stone-700" @click="visible = true" />
       </div>
     </div>
   </nav>

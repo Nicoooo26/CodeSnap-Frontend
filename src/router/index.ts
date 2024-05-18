@@ -102,7 +102,6 @@ const router = createRouter({
   ]
 })
 
-let isFirstLoad = true;
 
 router.beforeEach((to, from, next) => {
   const token = cookies.get('token');
