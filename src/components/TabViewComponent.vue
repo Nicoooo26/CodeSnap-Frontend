@@ -19,11 +19,12 @@ const photos = ref<any[]>([]);
 const foros = ref<any[]>([]);
 const idUser = ref<string>('');
 
+const URL_Backend = import.meta.env.VITE_URL_BACKEND
 // Función para ordenar los scripts por fecha de creación más reciente
 const sortScriptsByDate = () => {
   scripts.value.sort((a, b) => {
-    const dateA = new Date(a.fecha_creacion);
-    const dateB = new Date(b.fecha_creacion);
+    const dateA = new Date(a.dateCreated);
+    const dateB = new Date(b.dateCreated);
     return dateB.getTime() - dateA.getTime();
   });
 };
@@ -44,11 +45,11 @@ watch(scripts, () => {
 
 const obtenerScripts = async () => {
   try {
-    await axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } })
+    await axios.get(`${URL_Backend}user?token=${token}`, { headers: { 'api-key': `${token}` } })
       .then(response => {
-        const userId = response.data.usuarios[0].id
-        numScripts.value = response.data.usuarios[0].numcodigo
-        axios.get(`http://localhost/DWES/CodesnapBackend/scripts?idUser=${userId}`, { headers: { 'api-key': `${token}` } })
+        const userId = response.data.users[0].id
+        numScripts.value = response.data.users[0].numCodes
+        axios.get(`${URL_Backend}script?idUser=${userId}`, { headers: { 'api-key': `${token}` } })
           .then(response => {
             scripts.value = response.data.scripts;
             sortScriptsByDate();
@@ -66,13 +67,13 @@ const obtenerScripts = async () => {
 }
 const obtenerForos = async () => {
   try {
-    await axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } })
+    await axios.get(`${URL_Backend}user?token=${token}`, { headers: { 'api-key': `${token}` } })
       .then(response => {
-        const userId = response.data.usuarios[0].id
-        numForos.value = response.data.usuarios[0].foroscreados
-        axios.get(`http://localhost/DWES/CodesnapBackend/forums?idUser=${userId}`, { headers: { 'api-key': `${token}` } })
+        const userId = response.data.users[0].id
+        numForos.value = response.data.users[0].numForums
+        axios.get(`${URL_Backend}forum?idUser=${userId}`, { headers: { 'api-key': `${token}` } })
           .then(response => {
-            foros.value = response.data.foros;
+            foros.value = response.data.forums;
           })
           .catch(error => {
             console.error('Error:', error);
@@ -88,13 +89,13 @@ const obtenerForos = async () => {
 
 
 const obtenerFotos = async () => {
-  await axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } })
+  await axios.get(`${URL_Backend}user?token=${token}`, { headers: { 'api-key': `${token}` } })
     .then(response => {
       // Obtener el ID del usuario
-      idUser.value = response.data.usuarios[0].id
+      idUser.value = response.data.users[0].id
 
       // Llamar a la API para obtener las fotos del usuario
-      axios.get(`http://localhost/DWES/CodesnapBackend/photos?idUser=${idUser.value}`, { headers: { 'api-key': `${token}` } })
+      axios.get(`${URL_Backend}photo?idUser=${idUser.value}`, { headers: { 'api-key': `${token}` } })
         .then(response => {
           // Almacenar las fotos obtenidas
           photos.value = response.data.photos
@@ -133,7 +134,7 @@ const eliminarScript = (idParam: any) => {
     acceptClass: 'p-button-danger',
     accept: async () => {
       try {
-        await axios.delete(`http://localhost/DWES/CodesnapBackend/scripts?id=${idParam}`, { headers: { 'api-key': `${token}` } })
+        await axios.delete(`${URL_Backend}script?id=${idParam}`, { headers: { 'api-key': `${token}` } })
       } catch (e) {
         console.log(e)
       }
@@ -156,7 +157,7 @@ const eliminarForo = (idParam: any) => {
     acceptClass: 'p-button-danger',
     accept: async () => {
       try {
-        await axios.delete(`http://localhost/DWES/CodesnapBackend/forums?id=${idParam}`, { headers: { 'api-key': `${token}` } })
+        await axios.delete(`${URL_Backend}forum?id=${idParam}`, { headers: { 'api-key': `${token}` } })
       } catch (e) {
         console.log(e)
       }
@@ -198,13 +199,12 @@ const imageSrc = computed(() => {
 });
 const SavePhoto = () => {
   console.log(idUser.value, imagen.value, descripcion.value)
-  axios.post(`http://localhost/DWES/CodesnapBackend/photos`, {
+  axios.post(`${URL_Backend}photo`, {
     idUser: idUser.value,
-    foto: imagen.value ? imagen.value : null,
+    photo: imagen.value ? imagen.value : null,
     description: descripcion.value ? descripcion.value : null
   }, { headers: { 'api-key': `${token}` } })
     .then(response => {
-      console.log(response);
       showModal.value = false;
       obtenerFotos()
       emits('cerrar')
@@ -273,7 +273,7 @@ const SavePhoto = () => {
             <router-link :to="{ name: 'instantaneas', params: { id: photo.id }}">
               <article class="post bg-gray-100 text-white relative pb-full md:mb-6">
                 <!-- Muestra la imagen de la foto -->
-                <img class="w-full h-full absolute left-0 top-0 object-cover" :src="photo.foto" :alt="`image-${photo.id}`" />
+                <img class="w-full h-full absolute left-0 top-0 object-cover" :src="photo.photo" :alt="`image-${photo.id}`" />
                 <!-- Muestra el número de likes -->
                 <div class="overlay bg-gray-800 bg-opacity-25 w-full h-full absolute left-0 top-0 hidden">
                   <div class="flex justify-center items-center space-x-4 h-full">
@@ -308,10 +308,10 @@ const SavePhoto = () => {
                   class="w-full bg-white text-black px-4 py-2 rounded hover:bg-gray-200 transition-colors relative">
                   <div class="flex justify-between items-center">
                     <div>
-                      <p class="font-bold text-xl">{{ script.titulo }}</p>
+                      <p class="font-bold text-xl">{{ script.title }}</p>
                       <p class="text-sm text-gray-600">Hecho por {{ script.username }}</p>
                     </div>
-                    <p class="text-sm text-gray-600">{{ script.fecha_creacion }}</p>
+                    <p class="text-sm text-gray-600">{{ script.dateCreated }}</p>
                   </div>
                 </button>
               </RouterLink>
@@ -346,9 +346,9 @@ const SavePhoto = () => {
           <p class="text-sm text-gray-200">{{ foro.question.length > 20 ? foro.question.slice(0, 20) + '...' : foro.question }}</p>
         </div>
         <div>
-          <p class="text-sm text-gray-200">{{ foro.fecha_creacion }}</p>
-          <p class="text-sm text-gray-200">{{ foro.tipo }}</p>
-          <p class="text-sm text-gray-200">Numero de respuestas: {{ foro.response_number }}</p>
+          <p class="text-sm text-gray-200">{{ foro.dateCreated }}</p>
+          <p class="text-sm text-gray-200">{{ foro.type }}</p>
+          <p class="text-sm text-gray-200">Numero de respuestas: {{ foro.numAnswers }}</p>
         </div>
       </button>
     </RouterLink>

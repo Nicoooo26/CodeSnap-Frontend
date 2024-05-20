@@ -3,12 +3,13 @@ import axios from 'axios';
 import { ref } from 'vue';
 import { useCookies } from 'vue3-cookies';
 import { useToast } from "primevue/usetoast";
+
+const URL_Backend = import.meta.env.VITE_URL_BACKEND
 const toast = useToast();
 
 const showWarn = () => {
     toast.add({ severity: 'warn', summary: 'Warning', detail: 'Rellene todos los campos porfavor', life: 3000 });
 };
-
 
 const emits = defineEmits(['cerrar']);
 const { cookies } = useCookies();
@@ -26,15 +27,15 @@ const crearForo = async() => {
       return;
     }
     // Realiza el GET para obtener los datos del usuario
-    const response = await axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } });
-    const usuario = response.data.usuarios[0];
+    const response = await axios.get(`${URL_Backend}user?token=${token}`, { headers: { 'api-key': `${token}` } });
+    const usuario = response.data.users[0];
     idUser.value = usuario.id;
     // Realiza el POST para enviar el script
-    await axios.post('http://localhost/DWES/CodesnapBackend/forums', {
+    await axios.post(`${URL_Backend}forum`, {
       idUser: idUser.value,
       title: titulo.value,
       question: pregunta.value,
-      tipo: tipo.value
+      type: tipo.value
     }, { headers: { 'api-key': `${token}` } });
     emits('cerrar', 'ok');
   } catch (error: any) {
@@ -59,7 +60,7 @@ const crearForo = async() => {
             <option value="PHP">PHP</option>
             <option value="JAVA">JAVA</option>
             <option value="JAVASCRIPT">JAVASCRIPT</option>
-            <option value="C++">C++</option>
+            <option value="C">C</option>
             <option value="HTML">HTML</option>
             <option value="SQL">SQL</option>
             <option value="CSS">CSS</option>
@@ -86,6 +87,4 @@ const crearForo = async() => {
   </div>
 </template>
 
-<style scoped>
-/* No hay estilos en este bloque, ya que se han trasladado a clases de Tailwind CSS */
-</style>
+<style scoped></style>

@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 
+const URL_Backend = import.meta.env.VITE_URL_BACKEND
 const router = useRouter();
 const route = useRoute();
 const id = route.params.id;
@@ -12,14 +13,14 @@ const token = cookies.get('token');
 
 const code = ref('');
 
-axios.get(`http://localhost/DWES/CodesnapBackend/scripts?id=${id}`, {
+axios.get(`${URL_Backend}script?id=${id}`, {
     headers: { 'api-key': `${token}` }
 })
     .then(response => {
         code.value = atob(response.data.scripts[0].code);
     })
-    .catch(error => {
-        console.log(error)
+    .catch(e => {
+        console.log(e)
     })
 
 const goBack = () => {

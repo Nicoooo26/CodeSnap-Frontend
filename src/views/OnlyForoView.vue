@@ -4,8 +4,10 @@ import { useCookies } from 'vue3-cookies';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { useToast } from "primevue/usetoast";
-const toast = useToast();
+import { decodeBase64 } from '@/others/others';
 
+const toast = useToast();
+const URL_Backend = import.meta.env.VITE_URL_BACKEND
 const route = useRoute();
 const router = useRouter();
 const { cookies } = useCookies()
@@ -18,14 +20,14 @@ const fechaPregunta = ref('')
 const respuesta = ref('');
 const idUser = ref()
 
-axios.get(`http://localhost/DWES/CodesnapBackend/forums?id=${id}`, { headers: { 'api-key': `${token}` } })
+axios.get(`${URL_Backend}forum?id=${id}`, { headers: { 'api-key': `${token}` } })
     .then(response => {
-        titulo.value = response.data.foros[0].title;
-        pregunta.value = response.data.foros[0].question;
-        fechaPregunta.value = response.data.foros[0].fecha_creacion;
+        titulo.value = response.data.forums[0].title;
+        pregunta.value = response.data.forums[0].question;
+        fechaPregunta.value = response.data.forums[0].dateCreated;
     })
-    .catch(error => {
-        console.error('Error:', error);
+    .catch(e => {
+        console.log(e);
     }
     );
 
@@ -33,12 +35,12 @@ const volver = () => {
     router.go(-1);
 }
 
-axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } })
+axios.get(`${URL_Backend}user?token=${token}`, { headers: { 'api-key': `${token}` } })
     .then(response => {
-        idUser.value = response.data.usuarios[0].id;
+        idUser.value = response.data.users[0].id;
     })
-    .catch(error => {
-        console.error('Error:', error);
+    .catch(e => {
+        console.log(e);
     }
     );
 
@@ -46,15 +48,14 @@ const showSuccess = () => {
     toast.add({ severity: 'success', summary: 'Respuesta enviada', detail: 'Tu respuesta ha sido enviada correctamente', life: 3000 });
 };
 // Respuestas
-const respuestas = ref();
+const answers = ref();
 const obtenerRespuestas = async () => {
     try {
-        const response = await axios.get(`http://localhost/DWES/CodesnapBackend/answer?idForum=${id}`, {
+        const response = await axios.get(`${URL_Backend}answer?idForum=${id}`, {
             headers: { 'api-key': `${token}` }
         });
-        respuestas.value = response.data.answers.sort((a: any, b: any) => new Date(b.response_Date).getTime() - new Date(a.response_Date).getTime());
+        answers.value = response.data.answers.sort((a: any, b: any) => new Date(b.answerDate).getTime() - new Date(a.answerDate).getTime());
         await obtenerNombresUsuarios();
-        console.log(respuestas)
     } catch (error) {
         console.error('Error al obtener los scripts:', error);
     }
@@ -63,15 +64,14 @@ onMounted(() => {
     obtenerRespuestas();
 });
 const obtenerNombresUsuarios = async () => {
-    for (const respuesta of respuestas.value) {
+    for (const respuesta of answers.value) {
         try {
-            const response = await axios.get(`http://localhost/DWES/CodesnapBackend/user?id=${respuesta.idUser}`, {
+            const response = await axios.get(`${URL_Backend}user?id=${respuesta.idUser}`, {
                 headers: { 'api-key': `${token}` }
             });
-            respuesta.username = response.data.usuarios[0].username;
-        } catch (error) {
-            console.error('Error al obtener el nombre del usuario:', error);
-            respuesta.username = 'Usuario desconocido';
+            respuesta.username = response.data.users[0].username;
+        } catch (e) {
+            console.log(e);
         }
     }
 };
@@ -82,20 +82,17 @@ const enviarRespuesta = async () => {
             return
         }
         // Realiza el GET para obtener los datos del usuario
-        await axios.post('http://localhost/DWES/CodesnapBackend/answer', {
+        await axios.post(`${URL_Backend}answer`, {
             idUser: idUser.value,
             idForum: id,
-            response: btoa(respuesta.value),
+            answer: btoa(respuesta.value),
         }, { headers: { 'api-key': `${token}` } });
         respuesta.value = ''
         showSuccess()
         obtenerRespuestas();
     } catch (e: any) {
-        console.error(e)
+        console.log(e)
     }
-};
-const decodificarBase64 = (cadenaBase64: string) => {
-    return atob(cadenaBase64);
 };
 </script>
 
@@ -128,11 +125,11 @@ const decodificarBase64 = (cadenaBase64: string) => {
 
         <!-- Respuestas con scrollbar -->
         <div class="overflow-auto h-52">
-            <div v-for="(respuesta, index) in respuestas" :key="index"
+            <div v-for="(answer, index) in answers" :key="index"
                 class="respuesta bg-white shadow-md rounded-lg p-4 mb-4 max-w-full">
-                <pre class="text-gray-800 break-all">{{ decodificarBase64(respuesta.response) }}</pre>
-                <div class="text-gray-600 text-sm mt-1">{{ respuesta.response_Date }}</div>
-                <div class="text-gray-600 text-sm mt-1">Respuesta de {{  respuesta.username }}</div>
+                <pre class="text-gray-800 break-all">{{ decodeBase64(answer.answer) }}</pre>
+                <div class="text-gray-600 text-sm mt-1">{{ answer.answerDate }}</div>
+                <div class="text-gray-600 text-sm mt-1">Respuesta de {{  answer.username }}</div>
             </div>
         </div>
     </div>

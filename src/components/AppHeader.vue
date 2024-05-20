@@ -51,10 +51,10 @@ const toggle = (event: Event) => {
 
 </script>
 <template>
-  <nav class="bg-stone-500 dark:bg-stone-800 border-b border-stone-700 transition-colors duration-300">
+  <nav class="bg-stone-400 dark:bg-stone-800 border-b border-stone-700 transition-colors duration-300">
     <div class="max-w-screen-xl flex items-center justify-between mx-auto p-4">
       <div class="flex items-center space-x-3 rtl:space-x-reverse">
-        <RouterLink to="/home" class="flex items-center space-x-3 rtl:space-x-reverse transition-colors duration-300 hover:text-stone-400 dark:hover:text-stone-200">
+        <RouterLink to="/home" class="flex items-center space-x-3 rtl:space-x-reverse transition-colors duration-300 ">
           <img src="/logo.jpg" class="h-8 logoNavbar rounded-lg transition-opacity duration-300 hover:opacity-75" alt="CodeSnap Logo" />
           <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-stone-400">CodeSnap</span>
         </RouterLink>

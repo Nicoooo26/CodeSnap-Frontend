@@ -1,160 +1,158 @@
 <script setup lang="ts">
-import { useCookies } from 'vue3-cookies';
-import axios from 'axios';
-import { ref } from 'vue';
+import { useCookies } from 'vue3-cookies'
+import axios from 'axios'
+import { ref } from 'vue'
 import router from '@/router'
 
+const URL_Backend = import.meta.env.VITE_URL_BACKEND
 const props = defineProps(['visible'])
-const {cookies} = useCookies()
+const { cookies } = useCookies()
 const token = cookies.get('token')
 const username = ref('')
 const profilePicture = ref('')
-let datos =null
+let datos = null
 
 // Hacer la solicitud utilizando Axios
-axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, {headers:{'api-key':`${token}`} })
-  .then(response => {
+axios
+  .get(`${URL_Backend}user?token=${token}`, { headers: { 'api-key': `${token}` } })
+  .then((response) => {
     // Manejar la respuesta aquí
-    datos=response.data.usuarios[0]
+    datos = response.data.users[0]
     username.value = datos.username
-    profilePicture.value=datos.foto?datos.foto:'usuario.png'
-
+    profilePicture.value = datos.profilePicture ? datos.profilePicture : 'usuario.png'
   })
-  .catch(error => {
+  .catch((error) => {
     // Manejar errores aquí
-    console.error('Error:', error);
-  }); 
+    console.error('Error:', error)
+  })
 
-  const logout = () =>{
-    cookies.remove('token')
-    router.push('/')
-  }
-
+const logout = () => {
+  cookies.remove('token')
+  router.push('/')
+}
 </script>
 <template>
   <div>
-      <div class="card flex justify-center">
-    <!-- eslint-disable-next-line vue/no-mutating-props -->
-    <Sidebar v-model:visible="props.visible">
-      <template #container>
-        <div class="flex flex-col h-full">
-          <div class="flex items-center justify-between px-4 pt-3 flex-shrink-0">
-            <span class="flex items-center space-x-2">
-              <img src="/logo.jpg" alt="Logo" class="w-9 h-9" />
-              <span class="font-semibold text-2xl text-primary">CodeSnap</span>
-            </span>
+    <div class="card flex justify-center">
+      <!-- eslint-disable-next-line vue/no-mutating-props -->
+      <Sidebar v-model:visible="props.visible">
+        <template #container>
+          <div class="flex flex-col h-full bg-stone-100">
+            <div class="flex items-center justify-between px-4 pt-3 flex-shrink-0 ">
+              <span class="flex items-center space-x-2 ">
+                <img src="/logo.jpg" alt="Logo" class="w-9 h-9" />
+                <span class="font-semibold text-2xl text-primary">CodeSnap</span>
+              </span>
 
-            <span>
-              <Button type="button" @click="$emit('visible')" icon="pi pi-times" class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center"></Button>
-            </span>
-          </div>
-          <div class="overflow-y-auto">
-            <ul class="p-3 m-0">
-              <li>
-                <div class="p-3 flex items-center justify-between text-600 cursor-pointer"></div>
-                <ul class="p-0 m-0 overflow-hidden">
-                  <!-- Tu lista de elementos -->
-                  <RouterLink to="/home" @click="$emit('visible')">
-                  <li>
-                    <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                      <i class="pi pi-home mr-2"></i>
-                      <span class="font-medium">Home</span>
-                    </div>
-                  </li>
-                </RouterLink>
-                <RouterLink to="/explorar" @click="$emit('visible')">
-                  <li>
-                    <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                      <i class="pi pi-compass mr-2"></i>
-                      <span class="font-medium">Explorar</span>
-                    </div>
-                  </li>
-                </RouterLink>
-                  <RouterLink to="/instantaneas" @click="$emit('visible')">
-                  <li>
-                    <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                      <i class="pi pi-images mr-2"></i>
-                      <span class="font-medium">Instantáneas</span>
-                    </div>
-                  </li>
-                </RouterLink>
-                  <RouterLink to="/foros" @click="$emit('visible')">
-                  <li>
-                    <a v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                      <i class="pi pi-comments mr-2"></i>
-                      <span class="font-medium">Foros</span>
-                    </a>
-                  </li>
-                </RouterLink>
-                  <RouterLink to="/scripts" @click="$emit('visible')">
-                  <li>
-                    <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                      <i class="pi pi-code mr-2"></i>
-                      <span class="font-medium">Scripts</span>
-                    </div>
-                  </li>
-                </RouterLink>
-                </ul>
-              </li>
-            </ul>
-            <ul class="list-none p-3 m-0">
-              <li>
-                <div class="p-3 flex align-items-center justify-content-between text-600 cursor-pointer p-ripple">
-                  <span class="font-medium">CONFIGURACIÓN GENERAL</span>
-                </div>
-                <ul class="list-none p-0 m-0 overflow-hidden">
-                  <RouterLink to="/setting" @click="$emit('visible')">
-                  <li>
-                    <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                      <i class="pi pi-cog mr-2"></i>
-                      <span class="font-medium">Ajustes</span>
-                    </div>
-                  </li>
-                </RouterLink>
-                <RouterLink to="/soporte" @click="$emit('visible')">
-                  <li>
-                    <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                      <i class="pi pi-envelope mr-2"></i>
-                      <span class="font-medium">Soporte</span>
-                    </div>
-                  </li>
-                </RouterLink>
-                  <RouterLink to="/politicyPrivacity">
-                  <li>
-                    <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                      <i class="pi pi-file mr-2"></i>
-                      <span class="font-medium">Política de Privacidad</span>
-                    </div>
-                  </li>
-                </RouterLink>
-                <button @click="logout" class="w-full">
-                  <li>
-                    <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-red-600/20">
-                      <i class="pi pi-sign-out mr-2 text-red-600"></i>
-                      <span class="font-medium text-red-600">Desconectar</span>
-                    </div>
-                  </li>
-                  </button>
-                </ul>
-              </li>
-            </ul>
-          </div>
-          <RouterLink to="/profile" @click="$emit('visible')">
-            <div class="mt-auto">
-              <hr class="my-3 border-t border-gray-300" />
-              <div class="m-3 flex items-center cursor-pointer p-3 gap-2 rounded border border-gray-300 hover:bg-gray-100">
-                <img :src="profilePicture" class="w-14 h-14 object-cover border rounded-full p-1" />
-                <span class="font-bold">{{username}}</span>
-              </div>
+              <span>
+                <Button type="button" @click="$emit('visible')" icon="pi pi-times" class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center"></Button>
+              </span>
             </div>
-          </RouterLink>
-        </div>
-      </template>
-    </Sidebar>
+            <div class="overflow-y-auto">
+              <ul class="p-3 m-0">
+                <li>
+                  <div class="p-3 flex items-center justify-between text-600 cursor-pointer"></div>
+                  <ul class="p-0 m-0 overflow-hidden">
+                    <!-- Tu lista de elementos -->
+                    <RouterLink to="/home" @click="$emit('visible')">
+                      <li>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-stone-300">
+                          <i class="pi pi-home mr-2"></i>
+                          <span class="font-medium">Home</span>
+                        </div>
+                      </li>
+                    </RouterLink>
+                    <RouterLink to="/explorar" @click="$emit('visible')">
+                      <li>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
+                          <i class="pi pi-compass mr-2"></i>
+                          <span class="font-medium">Explorar</span>
+                        </div>
+                      </li>
+                    </RouterLink>
+                    <RouterLink to="/instantaneas" @click="$emit('visible')">
+                      <li>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
+                          <i class="pi pi-images mr-2"></i>
+                          <span class="font-medium">Instantáneas</span>
+                        </div>
+                      </li>
+                    </RouterLink>
+                    <RouterLink to="/foros" @click="$emit('visible')">
+                      <li>
+                        <a v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
+                          <i class="pi pi-comments mr-2"></i>
+                          <span class="font-medium">Foros</span>
+                        </a>
+                      </li>
+                    </RouterLink>
+                    <RouterLink to="/scripts" @click="$emit('visible')">
+                      <li>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
+                          <i class="pi pi-code mr-2"></i>
+                          <span class="font-medium">Scripts</span>
+                        </div>
+                      </li>
+                    </RouterLink>
+                  </ul>
+                </li>
+              </ul>
+              <ul class="list-none p-3 m-0">
+                <li>
+                  <div class="p-3 flex align-items-center justify-content-between text-600 cursor-pointer p-ripple">
+                    <span class="font-medium">CONFIGURACIÓN GENERAL</span>
+                  </div>
+                  <ul class="list-none p-0 m-0 overflow-hidden">
+                    <RouterLink to="/setting" @click="$emit('visible')">
+                      <li>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
+                          <i class="pi pi-cog mr-2"></i>
+                          <span class="font-medium">Ajustes</span>
+                        </div>
+                      </li>
+                    </RouterLink>
+                    <RouterLink to="/soporte" @click="$emit('visible')">
+                      <li>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
+                          <i class="pi pi-envelope mr-2"></i>
+                          <span class="font-medium">Soporte</span>
+                        </div>
+                      </li>
+                    </RouterLink>
+                    <RouterLink to="/politicyPrivacity">
+                      <li>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
+                          <i class="pi pi-file mr-2"></i>
+                          <span class="font-medium">Política de Privacidad</span>
+                        </div>
+                      </li>
+                    </RouterLink>
+                    <button @click="logout" class="w-full">
+                      <li>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-red-600/20">
+                          <i class="pi pi-sign-out mr-2 text-red-600"></i>
+                          <span class="font-medium text-red-600">Desconectar</span>
+                        </div>
+                      </li>
+                    </button>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            <RouterLink to="/profile" @click="$emit('visible')">
+              <div class="mt-auto">
+                <hr class="my-3 border-t border-gray-300" />
+                <div class="m-3 flex items-center cursor-pointer p-3 gap-2 rounded border border-gray-300 hover:bg-gray-100">
+                  <img :src="profilePicture" class="w-14 h-14 object-cover border rounded-full p-1" />
+                  <span class="font-bold">{{ username }}</span>
+                </div>
+              </div>
+            </RouterLink>
+          </div>
+        </template>
+      </Sidebar>
+    </div>
   </div>
-</div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

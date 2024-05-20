@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { validateFormatUsername, validateFormatEmail } from '@/others/validations/formatValidations'
+import { validateFormatUsername, validateFormatEmail } from '@/others/others'
 import { ref, computed } from 'vue'
 import { useDark, useToggle } from '@vueuse/core'
 import Password from 'primevue/password'
@@ -7,7 +7,8 @@ import { useRouter } from 'vue-router'
 import { useCookies } from 'vue3-cookies'
 import axios from 'axios'
 
-const {cookies} = useCookies();
+const URL_Backend = import.meta.env.VITE_URL_BACKEND
+const { cookies } = useCookies()
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
 const router = useRouter()
@@ -59,21 +60,22 @@ const login = () => {
     usernameVacio.value = false
   }
   if (passwordVacio.value === false && usernameVacio.value === false) {
-    axios.post('http://localhost/DWES/CodesnapBackend/auth', {
-      username: usernameLogin.value,
-      password: passwordLogin.value
-    }).then(response => {
-      cookies.set('token',response.data.token)
-      router.push({ name: 'home' })
-    }).catch(error => {
-    credencialesError.value=true
-    setTimeout(() => {
-          credencialesError.value=false
-      }, 5000)
-    // Aquí puedes manejar el error, mostrar un mensaje al usuario, etc.
-  });
-}
-
+    axios
+      .post(`${URL_Backend}auth`, {
+        username: usernameLogin.value,
+        password: passwordLogin.value
+      })
+      .then((response) => {
+        cookies.set('token', response.data.token)
+        router.push({ name: 'home' })
+      })
+      .catch((e) => {
+        credencialesError.value = true
+        setTimeout(() => {
+          credencialesError.value = false
+        }, 5000)
+      })
+  }
 }
 
 const register = async () => {
@@ -106,7 +108,7 @@ const register = async () => {
   if (!usernameVacio.value && !usernameError.value && !emailError.value && !emailVacio.value && !passwordVacio.value) {
     try {
       // Lógica para enviar los datos al servidor y manejar la respuesta
-      await axios.post('http://localhost/DWES/CodesnapBackend/user', {
+      await axios.post(`${URL_Backend}user`, {
         username: usernameRegistro.value,
         password: passwordRegistro.value,
         email: emailRegistro.value
@@ -121,10 +123,10 @@ const register = async () => {
     } catch (error: any) {
       // Manejar el error de registro
       if (error.response && error.response.status === 401) {
-        usuarioExistente.value=true
+        usuarioExistente.value = true
         setTimeout(() => {
-          usuarioExistente.value=false
-      }, 5000)
+          usuarioExistente.value = false
+        }, 5000)
       } else {
         // Otro tipo de error, muestra un mensaje genérico de error
         console.error('Error durante el registro:', error.message)
@@ -233,4 +235,4 @@ const closePopup = () => {
   </div>
 </template>
 
-<style></style>
+<style></style>@/others/validations/others

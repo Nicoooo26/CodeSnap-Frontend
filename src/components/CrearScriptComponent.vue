@@ -3,6 +3,8 @@ import axios from 'axios';
 import { ref } from 'vue';
 import { useCookies } from 'vue3-cookies';
 import { useToast } from "primevue/usetoast";
+
+const URL_Backend = import.meta.env.VITE_URL_BACKEND
 const toast = useToast();
 
 const showWarn = () => {
@@ -47,16 +49,15 @@ const enviarScript = async (base64Content: string) => {
       return;
     }
     // Realiza el GET para obtener los datos del usuario
-    const response = await axios.get(`http://localhost/DWES/CodesnapBackend/user?token=${token}`, { headers: { 'api-key': `${token}` } });
-    const usuario = response.data.usuarios[0];
+    const response = await axios.get(`${URL_Backend}user?token=${token}`, { headers: { 'api-key': `${token}` } });
+    const usuario = response.data.users[0];
     idUser.value = usuario.id;
     username.value = usuario.username;
     // Realiza el POST para enviar el script
-    await axios.post('http://localhost/DWES/CodesnapBackend/scripts', {
+    await axios.post(`${URL_Backend}script`, {
       idUser: idUser.value,
       code: base64Content,
-      titulo: title.value,
-      username: username.value
+      title: title.value,
     }, { headers: { 'api-key': `${token}` } });
     emits('cerrar','ok');
   } catch (error: any) {
