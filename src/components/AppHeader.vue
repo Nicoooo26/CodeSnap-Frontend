@@ -19,7 +19,10 @@ const signOut = () => {
   cookies.remove('token')
   router.push('/')
 }
-const profileMove = () => router.push('/profile')
+const profileMove = () => {
+  router.push('/profile')
+  location.reload
+}
 const settingMove = () => router.push('/setting')
 
 const items = ref([

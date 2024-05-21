@@ -38,23 +38,24 @@ const router = createRouter({
           component: SettingView
         },
         {
-          path: '/profile',
+          path: '/profile/:id?',
           name: 'profile',
           component: ProfileView
         },
+        
         {
           path: '/scripts',
           name: 'scripts',
           component: ScriptsView
         },
         {
-          path: '/onlyScript/:id',
-          name: 'onlyScript',
+          path: '/script/:id',
+          name: 'script',
           component: OnlyScriptView
         },
         {
-          path: '/onlyForo/:id',
-          name: 'onlyForo',
+          path: '/foro/:id',
+          name: 'foro',
           component: OnlyForoView
         },
         {

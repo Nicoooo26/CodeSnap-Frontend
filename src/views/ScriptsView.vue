@@ -99,7 +99,7 @@ onMounted(() => {
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div v-for="script in filteredScripts" :key="script.id"
         class="bg-white rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl">
-        <RouterLink :to="`/onlyScript/${script.id}`" class="block p-6">
+        <RouterLink :to="`/script/${script.id}`" class="block p-6">
           <h2 class="text-lg font-semibold mb-4">{{ script.title }}</h2>
           <p class="text-gray-500">{{ new Date(script.dateCreated).toLocaleDateString() }}</p>
           <p class="text-gray-500">Creado por {{ script.username }}</p>

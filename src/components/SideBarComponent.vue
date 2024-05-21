@@ -19,7 +19,7 @@ axios
     // Manejar la respuesta aquí
     datos = response.data.users[0]
     username.value = datos.username
-    profilePicture.value = datos.profilePicture ? datos.profilePicture : 'usuario.png'
+    profilePicture.value = datos.profilePicture?datos.profilePicture:'/FCTProject/public/usuario.png'
   })
   .catch((error) => {
     // Manejar errores aquí
@@ -37,15 +37,17 @@ const logout = () => {
       <!-- eslint-disable-next-line vue/no-mutating-props -->
       <Sidebar v-model:visible="props.visible">
         <template #container>
-          <div class="flex flex-col h-full bg-stone-100">
+          <div class="flex flex-col h-full bg-stone-100 dark:bg-stone-900">
             <div class="flex items-center justify-between px-4 pt-3 flex-shrink-0 ">
               <span class="flex items-center space-x-2 ">
+                <div class="w-12 h-12 mb-4 flex items-center justify-center rounded-full bg-white border border-stone-500 dark:border-stone-300">
                 <img src="/logo.jpg" alt="Logo" class="w-9 h-9" />
-                <span class="font-semibold text-2xl text-primary">CodeSnap</span>
+                </div>
+                <span class="font-semibold text-2xl text-primary text-stone-600 dark:text-stone-200">CodeSnap</span>
               </span>
 
               <span>
-                <Button type="button" @click="$emit('visible')" icon="pi pi-times" class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center"></Button>
+                <Button type="button" @click="$emit('visible')" icon="pi pi-times" class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-stone-300 dark:bg-stone-100 dark:hover:bg-stone-300"></Button>
               </span>
             </div>
             <div class="overflow-y-auto">
@@ -56,41 +58,41 @@ const logout = () => {
                     <!-- Tu lista de elementos -->
                     <RouterLink to="/home" @click="$emit('visible')">
                       <li>
-                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-stone-300">
-                          <i class="pi pi-home mr-2"></i>
-                          <span class="font-medium">Home</span>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-stone-300 dark:hover:bg-stone-700">
+                          <i class="pi pi-home mr-2 text-stone-600 dark:text-stone-200"></i>
+                          <span class="font-medium text-stone-600 dark:text-stone-200">Home</span>
                         </div>
                       </li>
                     </RouterLink>
                     <RouterLink to="/explorar" @click="$emit('visible')">
                       <li>
-                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                          <i class="pi pi-compass mr-2"></i>
-                          <span class="font-medium">Explorar</span>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-stone-300 dark:hover:bg-stone-700">
+                          <i class="pi pi-compass mr-2 text-stone-600 dark:text-stone-200"></i>
+                          <span class="font-medium text-stone-600 dark:text-stone-200">Explorar</span>
                         </div>
                       </li>
                     </RouterLink>
                     <RouterLink to="/instantaneas" @click="$emit('visible')">
                       <li>
-                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                          <i class="pi pi-images mr-2"></i>
-                          <span class="font-medium">Instantáneas</span>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-stone-300 dark:hover:bg-stone-700">
+                          <i class="pi pi-images mr-2 text-stone-600 dark:text-stone-200"></i>
+                          <span class="font-medium text-stone-600 dark:text-stone-200">Instantáneas</span>
                         </div>
                       </li>
                     </RouterLink>
                     <RouterLink to="/foros" @click="$emit('visible')">
                       <li>
-                        <a v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                          <i class="pi pi-comments mr-2"></i>
-                          <span class="font-medium">Foros</span>
+                        <a v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-stone-300 dark:hover:bg-stone-700">
+                          <i class="pi pi-comments mr-2 text-stone-600 dark:text-stone-200"></i>
+                          <span class="font-medium text-stone-600 dark:text-stone-200">Foros</span>
                         </a>
                       </li>
                     </RouterLink>
                     <RouterLink to="/scripts" @click="$emit('visible')">
                       <li>
-                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                          <i class="pi pi-code mr-2"></i>
-                          <span class="font-medium">Scripts</span>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-stone-300 dark:hover:bg-stone-700">
+                          <i class="pi pi-code mr-2 text-stone-600 dark:text-stone-200"></i>
+                          <span class="font-medium text-stone-600 dark:text-stone-200">Scripts</span>
                         </div>
                       </li>
                     </RouterLink>
@@ -100,37 +102,37 @@ const logout = () => {
               <ul class="list-none p-3 m-0">
                 <li>
                   <div class="p-3 flex align-items-center justify-content-between text-600 cursor-pointer p-ripple">
-                    <span class="font-medium">CONFIGURACIÓN GENERAL</span>
+                    <span class="font-medium text-stone-600 dark:text-stone-200">CONFIGURACIÓN GENERAL</span>
                   </div>
                   <ul class="list-none p-0 m-0 overflow-hidden">
                     <RouterLink to="/setting" @click="$emit('visible')">
                       <li>
-                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                          <i class="pi pi-cog mr-2"></i>
-                          <span class="font-medium">Ajustes</span>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-stone-300 dark:hover:bg-stone-700">
+                          <i class="pi pi-cog mr-2 text-stone-600 dark:text-stone-200"></i>
+                          <span class="font-medium text-stone-600 dark:text-stone-200">Ajustes</span>
                         </div>
                       </li>
                     </RouterLink>
                     <RouterLink to="/soporte" @click="$emit('visible')">
                       <li>
-                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                          <i class="pi pi-envelope mr-2"></i>
-                          <span class="font-medium">Soporte</span>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-stone-300 dark:hover:bg-stone-700">
+                          <i class="pi pi-envelope mr-2 text-stone-600 dark:text-stone-200"></i>
+                          <span class="font-medium text-stone-600 dark:text-stone-200">Soporte</span>
                         </div>
                       </li>
                     </RouterLink>
                     <RouterLink to="/politicyPrivacity">
                       <li>
-                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-gray-100">
-                          <i class="pi pi-file mr-2"></i>
-                          <span class="font-medium">Política de Privacidad</span>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-stone-300 dark:hover:bg-stone-700">
+                          <i class="pi pi-file mr-2 text-stone-600 dark:text-stone-200"></i>
+                          <span class="font-medium text-stone-600 dark:text-stone-200">Política de Privacidad</span>
                         </div>
                       </li>
                     </RouterLink>
                     <button @click="logout" class="w-full">
                       <li>
                         <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-red-600/20">
-                          <i class="pi pi-sign-out mr-2 text-red-600"></i>
+                          <i class="pi pi-sign-out mr-2 text-red-600 "></i>
                           <span class="font-medium text-red-600">Desconectar</span>
                         </div>
                       </li>
@@ -142,9 +144,9 @@ const logout = () => {
             <RouterLink to="/profile" @click="$emit('visible')">
               <div class="mt-auto">
                 <hr class="my-3 border-t border-gray-300" />
-                <div class="m-3 flex items-center cursor-pointer p-3 gap-2 rounded border border-gray-300 hover:bg-gray-100">
-                  <img :src="profilePicture" class="w-14 h-14 object-cover border rounded-full p-1" />
-                  <span class="font-bold">{{ username }}</span>
+                <div class="m-3 flex items-center cursor-pointer p-3 gap-2 rounded border border-stone-600 hover:bg-stone-300 dark:hover:bg-stone-700">
+                  <img :src="profilePicture" class="w-14 h-14 object-cover border rounded-full p-1 dark:bg-stone-200" />
+                  <span class="font-bold text-stone-600 dark:text-stone-200">{{ username }}</span>
                 </div>
               </div>
             </RouterLink>

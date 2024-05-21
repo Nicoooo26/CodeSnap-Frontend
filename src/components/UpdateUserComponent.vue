@@ -49,7 +49,7 @@ const actualizarUser = () => {
         fullname: nombrecompleto.value ? nombrecompleto.value : null,
         description: descripcion.value ? descripcion.value : null,
         location: ubicacion.value ? ubicacion.value : null,
-        profilePicture: profilePicture.value ? profilePicture.value : null
+        profilePicture: profilePicture.value!='usuario.png' ? profilePicture.value : ''
       },
       { headers: { 'api-key': `${token}` } }
     )
@@ -86,7 +86,6 @@ const imageSrc = computed(() => {
   return ''
 })
 const deletePhoto = () => {
-  profilePicture.value = null
   profilePicture.value = 'usuario.png'
 }
 </script>

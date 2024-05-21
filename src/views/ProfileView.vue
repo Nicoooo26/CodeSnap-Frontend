@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import TabViewComponent from '@/components/TabViewComponent.vue'
 import UpdateUserComponent from '@/components/UpdateUserComponent.vue'
 import { useCookies } from 'vue3-cookies'
 import axios from 'axios'
+import { useRoute } from 'vue-router'
 
 const URL_Backend = import.meta.env.VITE_URL_BACKEND
 const mostrarModal = ref(false)
@@ -24,22 +25,32 @@ const controlarEmit = (mssg: string) => {
 const { cookies } = useCookies()
 const token = cookies.get('token')
 const datos = ref<any>({})
+const route = useRoute()
 
-const obtenerDatosUser = async (): Promise<void> => {
+const obtenerDatosUser = async (userId?: string): Promise<void> => {
   try {
-    const response = await axios.get(`${URL_Backend}user`, {
+    const endpoint = userId ? `${URL_Backend}user?id=${userId}` : `${URL_Backend}user?token=${token}`
+    const response = await axios.get(endpoint, {
       headers: { 'api-key': `${token}` },
-      params: { token },
     })
     datos.value = response.data.users[0]
+    datos.value.profilePicture=datos.value.profilePicture?datos.value.profilePicture:'/FCTProject/public/usuario.png'
   } catch (error) {
     console.log(error)
   }
 }
 
 onMounted(() => {
-  obtenerDatosUser()
+  const userId = route.params.id as string | undefined
+  obtenerDatosUser(userId)
 })
+// Observar cambios en los parámetros de la ruta
+watch(() => route.params.id, (newId:any) => {
+  obtenerDatosUser(newId)
+})
+const isCurrentUser = computed(() => !route.params.id)
+const userId = computed(() => route.params.id as string | undefined)
+
 </script>
 
 <template>
@@ -56,7 +67,7 @@ onMounted(() => {
               <span class="inline-block fas fa-certificate fa-lg text-blue-500 relative mr-6 text-xl transform -translate-y-2" aria-hidden="true">
                 <i class="fas fa-check text-white text-xs absolute inset-x-0 ml-1 mt-px"></i>
               </span>
-              <Button label="Editar perfil" class="bg-blue-500 px-2 py-1 text-white font-semibold text-sm rounded text-center sm:inline-block block" @click="abrirModal" />
+              <Button v-if="isCurrentUser" label="Editar perfil" class="bg-blue-500 px-2 py-1 text-white font-semibold text-sm rounded text-center sm:inline-block block" @click="abrirModal" />
             </div>
             <ul class="hidden md:flex space-x-8 mb-4">
               <li>
@@ -103,11 +114,12 @@ onMounted(() => {
               foros
             </li>
           </ul>
-          <TabViewComponent @cerrar="obtenerDatosUser" />
+          <TabViewComponent @cerrar="obtenerDatosUser" v-bind="userId && { userId }" :numScripts=datos.numCodes :numPhotos=datos.numPhotos :numForums=datos.numForums />
         </div>
       </div>
     </main>
     <UpdateUserComponent v-if="mostrarModal" @cerrar="controlarEmit" />
   </div>
 </template>
+
 <style scoped></style>

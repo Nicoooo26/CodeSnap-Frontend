@@ -62,7 +62,7 @@ const filteredForos = computed(() => {
     </div>
     <div class="bg-white shadow-md rounded-lg p-6">
     <div v-for="foro in filteredForos" :key="foro.id" class="mb-6">
-      <RouterLink :to="`/onlyForo/${foro.id}`" class="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-300">
+      <RouterLink :to="`/foro/${foro.id}`" class="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-300">
         <h2 class="text-xl font-semibold mb-2">{{ foro.title }}</h2>
         <p class="text-gray-500 text-sm mb-1">Pregunta: {{ (foro.question).slice(0,50)}}...</p>
         <p class="text-gray-500 text-sm mb-1">Creado el {{ foro.dateCreated }}</p>
