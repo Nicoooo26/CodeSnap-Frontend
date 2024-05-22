@@ -10,6 +10,7 @@ const { cookies } = useCookies()
 const token = cookies.get('token')
 const username = ref('')
 const profilePicture = ref('')
+const privilegios=ref()
 let datos = null
 
 // Hacer la solicitud utilizando Axios
@@ -19,7 +20,8 @@ axios
     // Manejar la respuesta aquí
     datos = response.data.users[0]
     username.value = datos.username
-    profilePicture.value = datos.profilePicture?datos.profilePicture:'/FCTProject/public/usuario.png'
+    profilePicture.value = datos.profilePicture ? datos.profilePicture : '/FCTProject/public/usuario.png'
+    privilegios.value=datos.role
   })
   .catch((error) => {
     // Manejar errores aquí
@@ -38,10 +40,10 @@ const logout = () => {
       <Sidebar v-model:visible="props.visible">
         <template #container>
           <div class="flex flex-col h-full bg-stone-100 dark:bg-stone-900">
-            <div class="flex items-center justify-between px-4 pt-3 flex-shrink-0 ">
-              <span class="flex items-center space-x-2 ">
+            <div class="flex items-center justify-between px-4 pt-3 flex-shrink-0">
+              <span class="flex items-center space-x-2">
                 <div class="w-12 h-12 mb-4 flex items-center justify-center rounded-full bg-white border border-stone-500 dark:border-stone-300">
-                <img src="/logo.jpg" alt="Logo" class="w-9 h-9" />
+                  <img src="/logo.jpg" alt="Logo" class="w-9 h-9" />
                 </div>
                 <span class="font-semibold text-2xl text-primary text-stone-600 dark:text-stone-200">CodeSnap</span>
               </span>
@@ -55,7 +57,14 @@ const logout = () => {
                 <li>
                   <div class="p-3 flex items-center justify-between text-600 cursor-pointer"></div>
                   <ul class="p-0 m-0 overflow-hidden">
-                    <!-- Tu lista de elementos -->
+                    <RouterLink v-if="privilegios=='ADMIN'" to="/admin" @click="$emit('visible')">
+                      <li>
+                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-blue-600/20">
+                          <i class="pi pi-prime mr-2 text-blue-500"></i>
+                          <span class="font-medium text-blue-500">Admin</span>
+                        </div>
+                      </li>
+                    </RouterLink>
                     <RouterLink to="/home" @click="$emit('visible')">
                       <li>
                         <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-stone-300 dark:hover:bg-stone-700">
@@ -132,7 +141,7 @@ const logout = () => {
                     <button @click="logout" class="w-full">
                       <li>
                         <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-red-600/20">
-                          <i class="pi pi-sign-out mr-2 text-red-600 "></i>
+                          <i class="pi pi-sign-out mr-2 text-red-600"></i>
                           <span class="font-medium text-red-600">Desconectar</span>
                         </div>
                       </li>

@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { useDark, useToggle } from '@vueuse/core'
 import router from '@/router'
-import { ref } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
 import SideBarComponent from './SideBarComponent.vue';
 import { useCookies } from 'vue3-cookies';
+import axios from 'axios';
 
 const {cookies} = useCookies()
+const token = cookies.get('token')
+const username = ref('')
+const URL_Backend = import.meta.env.VITE_URL_BACKEND
 
 const visible = ref(false)
 const VisibleOff=()=>{
@@ -24,10 +28,20 @@ const profileMove = () => {
   location.reload
 }
 const settingMove = () => router.push('/setting')
-
+const getUsers = async () => {
+  try {
+    const response = await axios.get(`${URL_Backend}user?token=${token}`, {
+      headers: { 'api-key': `${token}` }
+    })
+    username.value = response.data.users[0].username
+    console.log(username.value)
+  } catch (e) {
+    console.log(e)
+  }
+}
 const items = ref([
   {
-    label: 'User49423',
+    label: username,
     items: [
       {
         label: 'Perfil',
@@ -47,14 +61,16 @@ const items = ref([
     ]
   }
 ])
-
+onMounted(async()=>{
+  await getUsers()
+})
 const toggle = (event: Event) => {
   menu.value.toggle(event)
 }
 
 </script>
 <template>
-  <nav class="bg-stone-400 dark:bg-stone-800 border-b border-stone-700 transition-colors duration-300">
+  <nav class="bg-stone-200 dark:bg-stone-800 border-b border-stone-700 transition-colors duration-300">
     <div class="max-w-screen-xl flex items-center justify-between mx-auto p-4">
       <div class="flex items-center space-x-3 rtl:space-x-reverse">
         <RouterLink to="/home" class="flex items-center space-x-3 rtl:space-x-reverse transition-colors duration-300 ">

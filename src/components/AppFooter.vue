@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <footer class="bg-stone-400 dark:bg-stone-800 border-t border-stone-700 dark:border-white">
+  <footer class="bg-stone-200 dark:bg-stone-800 border-t border-stone-700 dark:border-white">
     <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-6">
       <div class="sm:flex sm:items-center sm:justify-between">
         <span class="text-sm text-stone-700 sm:text-center dark:text-stone-400">© 2024 <a href="#" class="hover:underline">CodeSnap</a>. All Rights Reserved. </span>

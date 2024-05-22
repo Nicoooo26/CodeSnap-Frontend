@@ -9,7 +9,7 @@ const comment = ref<string>('');
 </script>
 
 <template>
-  <div class="flex justify-center items-center h-screen bg-stone-400 dark:bg-stone-800 text-stone-500 dark:text-stone-200">
+  <div class="flex justify-center items-center h-screen bg-stone-200 dark:bg-stone-800 text-stone-500 dark:text-stone-200">
     <div class="shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 max-w-md bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 transition-all duration-500">
       <h1 class="text-3xl font-bold mb-8 text-center text-stone-600 dark:text-stone-400">SOPORTE</h1>
       <form action="https://formsubmit.co/aee7f2e885637d6dfa095d7b2ae45646" method="POST">

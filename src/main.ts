@@ -1,8 +1,7 @@
 /* eslint-disable vue/no-reserved-component-names */
 /* eslint-disable vue/multi-word-component-names */
-import "primevue/resources/themes/aura-light-green/theme.css";
-
-import "primeicons/primeicons.css";
+import 'primevue/resources/themes/saga-blue/theme.css' // Puedes elegir otro tema
+import 'primeicons/primeicons.css'
 import "./styles/main.css";
 
 import { createPinia } from "pinia";

@@ -9,7 +9,7 @@ const goBack = () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center min-h-screen bg-stone-400 dark:bg-stone-700 text-stone-400 dark:text-stone-400">
+  <div class="flex flex-col items-center justify-center min-h-screen bg-stone-200 dark:bg-stone-700 text-stone-400 dark:text-stone-400">
     <div class="p-6 max-w-xl bg-stone-100 dark:bg-stone-800 rounded-lg shadow-lg border border-stone-300 dark:border-stone-700 transition-all duration-500">
       <p>
         {{ privacyPolicy }}
