@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import axios from 'axios'
 import { useCookies } from 'vue3-cookies'
-import { ref, computed, watch, onMounted, watchEffect } from 'vue'
+import { ref, computed, watch, watchEffect } from 'vue'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 const props = defineProps({
@@ -224,7 +224,7 @@ const SavePhoto = () => {
       },
       { headers: { 'api-key': `${token}` } }
     )
-    .then((response) => {
+    .then(() => {
       showModal.value = false
       obtenerFotos()
       emits('cerrar')
@@ -272,8 +272,8 @@ const SavePhoto = () => {
         <div class="flex flex-wrap -mx-px md:-mx-3">
           <div class="w-1/3 p-px md:px-3">
             <a :href="`#`">
-              <article v-if="!props.userId" class="post bg-gray-200 text-white relative md:mb-6">
-                <label for="fileInput2" class="w-full h-full flex justify-center items-center bg-gray-300 rounded-full cursor-pointer">
+              <article v-if="!props.userId" class="post bg-gray-200 text-white relative w-full h-full left-0 top-0 md:mb-6">
+                <label for="fileInput2" class="w-full h-full flex justify-center items-center bg-gray-300 cursor-pointer">
                   <input type="file" id="fileInput2" style="display: none" @change="handleFileChange" />
                   <svg xmlns="http://www.w3.org/2000/svg" width="200" height="300" fill="currentColor" class="bi bi-plus-circle-dotted text-gray-500 text-7xl" viewBox="0 0 16 16">
                     <path
@@ -287,7 +287,7 @@ const SavePhoto = () => {
           <!-- Itera sobre cada foto -->
           <div v-for="photo in photos" :key="photo.id" class="w-1/3 p-px md:px-3">
             <router-link :to="{ name: 'instantaneas', params: { id: photo.id } }">
-              <article class="post bg-gray-100 text-white relative pb-full md:mb-6">
+              <article class="post bg-gray-100 text-white relative w-full h-full pb-full md:mb-6">
                 <!-- Muestra la imagen de la foto -->
                 <img class="w-full h-full absolute left-0 top-0 object-cover" :src="photo.photo" :alt="`image-${photo.id}`" />
                 <!-- Muestra el número de likes -->
