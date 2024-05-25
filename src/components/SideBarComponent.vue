@@ -4,10 +4,14 @@ import axios from 'axios'
 import { ref } from 'vue'
 import router from '@/router'
 
+// Ruta del backend desde variables de entorno
 const URL_Backend = import.meta.env.VITE_URL_BACKEND
-const props = defineProps(['visible'])
+
+// Obtener token de cookies
 const { cookies } = useCookies()
-const token = cookies.get('token')
+const token: string = cookies.get('token')
+
+const props = defineProps(['visible'])
 const username = ref('')
 const profilePicture = ref('')
 const privilegios=ref()

@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { useDark, useToggle } from '@vueuse/core'
 import router from '@/router'
-import { onMounted, ref, watchEffect } from 'vue'
+import { onMounted, ref } from 'vue'
 import SideBarComponent from './SideBarComponent.vue';
 import { useCookies } from 'vue3-cookies';
 import axios from 'axios';
 
-const {cookies} = useCookies()
-const token = cookies.get('token')
-const username = ref('')
+// Ruta del backend desde variables de entorno
 const URL_Backend = import.meta.env.VITE_URL_BACKEND
 
+// Obtener token de cookies
+const { cookies } = useCookies()
+const token: string = cookies.get('token')
+
+const username = ref('')
 const visible = ref(false)
 const VisibleOff=()=>{
   visible.value=false

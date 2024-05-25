@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import router from '@/router';
-import privacyPolicy from '@/others/privacyPolicy';
+import router from '@/router'
+import privacyPolicy from '@/others/privacyPolicy'
 
-const goBack = () => {
-  console.log(router)
-  router.go(-1);
-};
+//Función para volver atrás
+const goBack = ():void => router.go(-1)
 </script>
 
 <template>
@@ -16,10 +14,7 @@ const goBack = () => {
       </p>
     </div>
     <div class="mt-8">
-      <button @click="goBack"
-        class="px-6 py-3 bg-stone-500 dark:bg-stone-800 text-stone-50 dark:text-stone-200 rounded-full shadow-lg hover:bg-stone-500 dark:hover:bg-stone-600 transform hover:scale-105 transition-transform duration-300">
-        Atrás
-      </button>
+      <button @click="goBack" class="px-6 py-3 bg-stone-500 dark:bg-stone-800 text-stone-50 dark:text-stone-200 rounded-full shadow-lg hover:bg-stone-500 dark:hover:bg-stone-600 transform hover:scale-105 transition-transform duration-300">Atrás</button>
     </div>
   </div>
 </template>

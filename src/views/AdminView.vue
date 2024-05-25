@@ -8,9 +8,12 @@ import Button from 'primevue/button'
 import { FilterMatchMode } from 'primevue/api'
 import { useCookies } from 'vue3-cookies'
 
+// Ruta del backend desde variables de entorno
 const URL_Backend = import.meta.env.VITE_URL_BACKEND
+
+// Obtener token de cookies
 const { cookies } = useCookies()
-const token = cookies.get('token')
+const token: string = cookies.get('token')
 
 const users = ref([])
 const loading = ref(true)
@@ -29,7 +32,8 @@ const getUsers = async () => {
 }
 
 const blockUser = async (id: number) => {
-  try {
+  loading.value=true
+    try {
     await axios.put(`${URL_Backend}user?id=${id}`, { blocked: 1 }, { headers: { 'api-key': `${token}` } })
     getUsers()
   } catch (e) {
@@ -38,6 +42,7 @@ const blockUser = async (id: number) => {
 }
 
 const unblockUser = async (id: number) => {
+  loading.value=true
   try {
     await axios.put(`${URL_Backend}user?id=${id}`, { blocked: 0 }, { headers: { 'api-key': `${token}` } })
     getUsers()
@@ -93,8 +98,8 @@ onMounted(() => {
           </Column>
           <Column header="Acciones" style="min-width: 12rem">
             <template #body="{ data }">
-              <Button v-if="data.blocked == 0" label="Bloquear cuenta" icon="pi pi-lock" class="p-button-success" @click="blockUser(data.id)" />
-              <Button v-else label="Desbloquear cuenta" icon="pi pi-unlock" class="p-button-danger" @click="unblockUser(data.id)" />
+              <Button v-if="data.blocked == 0" label="Bloquear cuenta" icon="pi pi-lock" class="p-button-danger text-red-600" @click="blockUser(data.id)" />
+              <Button v-else label="Desbloquear cuenta" icon="pi pi-unlock" class="p-button-success text-green-600" @click="unblockUser(data.id)" />
             </template>
           </Column>
         </DataTable>

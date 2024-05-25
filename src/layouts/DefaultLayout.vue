@@ -5,9 +5,9 @@ import AppFooter from '@/components/AppFooter.vue'
 </script>
 
 <template>
-    <div id="page-container">
+    <div id="page-container" class="bg-stone-200 dark:bg-stone-800">
         <AppHeader />
-        <RouterView id="content-wrap" />
+        <RouterView id="content-wrap" class="bg-stone-200 dark:bg-stone-800" />
         
         <AppFooter id="footer" />
     </div>

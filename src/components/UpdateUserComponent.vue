@@ -3,10 +3,14 @@ import { ref, computed } from 'vue'
 import { useCookies } from 'vue3-cookies'
 import axios from 'axios'
 
-const emits = defineEmits(['cerrar'])
+// Ruta del backend desde variables de entorno
 const URL_Backend = import.meta.env.VITE_URL_BACKEND
+
+// Obtener token de cookies
 const { cookies } = useCookies()
-const token = cookies.get('token')
+const token: string = cookies.get('token')
+
+const emits = defineEmits(['cerrar'])
 let datos = null
 let id: any = null
 
@@ -40,7 +44,9 @@ const ubicacion = ref('')
 const nombrecompleto = ref('')
 
 const actualizarUser = () => {
-  axios.put(`${URL_Backend}user?id=${id}`,
+  axios
+    .put(
+      `${URL_Backend}user?id=${id}`,
       {
         username: username.value,
         birthdate: fechanacimiento.value,
@@ -49,7 +55,7 @@ const actualizarUser = () => {
         fullname: nombrecompleto.value ? nombrecompleto.value : null,
         description: descripcion.value ? descripcion.value : null,
         location: ubicacion.value ? ubicacion.value : null,
-        profilePicture: profilePicture.value!='usuario.png' ? profilePicture.value : ''
+        profilePicture: profilePicture.value != 'usuario.png' ? profilePicture.value : ''
       },
       { headers: { 'api-key': `${token}` } }
     )
@@ -92,43 +98,44 @@ const deletePhoto = () => {
 
 <template>
   <div class="modal w-70">
-    <div class="modal-content">
-      <h2 class="text-xl font-semibold mb-4">Editar Perfil</h2>
-      <span class="close" @click="emits('cerrar')">&times;</span>
+    <div class="modal-content transition-all duration-300 ease-in-out bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-stone-50 p-6 rounded-lg shadow-lg">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Editar Perfil</h2>
+        <span class="close cursor-pointer" @click="$emit('cerrar')">&times;</span>
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="flex flex-col items-center space-y-4">
           <div class="relative">
-            <img class="w-20 h-20 md:w-40 md:h-40 border rounded-full p-1" :src="imageSrc" alt="profile" />
+            <img class="w-20 h-20 md:w-40 md:h-40 border border-stone-300 dark:border-stone-700 rounded-full p-1" :src="imageSrc" alt="profile" />
           </div>
           <div class="flex space-x-4">
             <input type="file" id="fileInput" class="hidden" @change="handleFileUpload" accept="image/jpeg, image/png, image/jpg" />
-            <label for="fileInput" class="px-4 py-2 rounded bg-blue-500 text-white cursor-pointer hover:bg-blue-600 focus:outline-none transition-colors"> Cambiar foto </label>
-
-            <input type="button" id="borrarFoto" @click="deletePhoto" />
-            <label for="borrarFoto" class="px-4 py-2 rounded bg-blue-500 text-white cursor-pointer hover:bg-blue-600 focus:outline-none transition-colors"> Eliminar foto </label>
+            <label for="fileInput" class="px-4 py-2 rounded bg-stone-500 text-stone-50 cursor-pointer hover:bg-stone-600 transition-colors"> Cambiar foto </label>
+            <input type="button" id="borrarFoto" @click="deletePhoto" class="hidden" />
+            <label for="borrarFoto" class="px-4 py-2 rounded bg-stone-500 text-stone-50 cursor-pointer hover:bg-stone-600 transition-colors"> Eliminar foto </label>
           </div>
         </div>
         <div class="flex flex-col justify-center space-y-5">
-          <input type="text" placeholder="Username" class="border p-2 rounded w-full h-10" v-model="username" />
-          <input type="text" placeholder="Nombre Completo" class="border p-2 rounded w-full h-10" v-model="nombrecompleto" />
+          <input type="text" placeholder="Username" class="border border-stone-300 dark:border-stone-700 p-2 rounded w-full h-10 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-50" v-model="username" />
+          <input type="text" placeholder="Nombre Completo" class="border border-stone-300 dark:border-stone-700 p-2 rounded w-full h-10 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-50" v-model="nombrecompleto" />
         </div>
       </div>
-      <div class="flex gap-4 mb-6">
-        <input type="date" placeholder="Fecha de nacimiento" v-model="fechanacimiento" class="border p-2 rounded w-1/4" />
-        <input type="text" placeholder="Ubicación" v-model="ubicacion" class="border p-2 rounded w-1/4" />
-        <input type="text" placeholder="Teléfono" v-model="telefono" class="border p-2 rounded w-1/4" />
-        <select v-model="sexo" class="border p-2 rounded w-1/4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <input type="date" placeholder="Fecha de nacimiento" v-model="fechanacimiento" class="border border-stone-300 dark:border-stone-700 p-2 rounded bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-50 w-full" />
+        <input type="text" placeholder="Ubicación" v-model="ubicacion" class="border border-stone-300 dark:border-stone-700 p-2 rounded bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-50 w-full" />
+        <input type="text" placeholder="Teléfono" v-model="telefono" class="border border-stone-300 dark:border-stone-700 p-2 rounded bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-50 w-full" />
+        <select v-model="sexo" class="border border-stone-300 dark:border-stone-700 p-2 rounded bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-50 w-full">
           <option value="0">Masculino</option>
           <option value="1">Femenino</option>
         </select>
       </div>
       <div class="mb-4">
-        <textarea placeholder="Descripcion" v-model="descripcion" class="border p-2 rounded w-full"></textarea>
+        <textarea placeholder="Descripcion" v-model="descripcion" class="border border-stone-300 dark:border-stone-700 p-2 rounded w-full bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-50"></textarea>
       </div>
       <div class="flex justify-end">
-        <button type="button" id="theme-toggle" class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 focus:outline-none transition-colors mr-2" @click="actualizarUser">Guardar cambios</button>
-        <button type="button" id="cancelar" class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 focus:outline-none transition-colors" @click="emits('cerrar')">Cancelar</button>
-      </div>
+    <button type="button" id="theme-toggle" class="px-4 py-2 rounded bg-stone-500 text-white hover:bg-stone-600 focus:outline-none transition-colors mr-2 dark:bg-stone-800 dark:hover:bg-stone-700" @click="actualizarUser">Guardar cambios</button>
+    <button type="button" id="cancelar" class="px-4 py-2 rounded bg-stone-500 text-white hover:bg-stone-600 focus:outline-none transition-colors dark:bg-stone-800 dark:hover:bg-stone-700" @click="emits('cerrar')">Cancelar</button>
+</div>
     </div>
   </div>
 </template>
@@ -148,7 +155,6 @@ const deletePhoto = () => {
 }
 
 .modal-content {
-  background-color: #fff;
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);

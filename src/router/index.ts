@@ -132,7 +132,6 @@ const getUsers = async (token: any) => {
 router.beforeEach(async (to, from, next) => {
   const token = cookies.get('token')
   if (token) await getUsers(token)
-    console.log(blocked.value)
   if (!token && to.name != 'login') {
     // Si no hay token y no está en la página de inicio de sesión,
     // redirige a la página de inicio de sesión
@@ -141,12 +140,11 @@ router.beforeEach(async (to, from, next) => {
     // Si hay token pero está en la página de inicio de sesión,
     // redirige a la página de inicio
     next({ name: 'home' })
-  }else if(to.name === 'admin' && role.value=='USER' && blocked.value==0){
-    next({name:'home'})
-  }else if(token && to.name != 'blocked' && blocked.value==1){
-    next({name:'blocked'})
-  }
-  else {
+  } else if (to.name === 'admin' && role.value == 'USER' && blocked.value == 0) {
+    next({ name: 'home' })
+  } else if (token && to.name != 'blocked' && blocked.value == 1) {
+    next({ name: 'blocked' })
+  } else {
     // Si hay token y no está en la página de inicio de sesión,
     // o si no hay token pero está en la página de inicio de sesión,
     // permite continuar navegando

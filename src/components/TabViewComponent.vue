@@ -1,218 +1,221 @@
 <script setup lang="ts">
-import axios from 'axios'
-import { useCookies } from 'vue3-cookies'
-import { ref, computed, watch, watchEffect } from 'vue'
-import { useConfirm } from 'primevue/useconfirm'
-import { useToast } from 'primevue/usetoast'
+import axios from "axios";
+import { useCookies } from "vue3-cookies";
+import { ref, computed, watch, watchEffect } from "vue";
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
+
+// Ruta del backend desde variables de entorno
+const URL_Backend = import.meta.env.VITE_URL_BACKEND;
+
+// Obtener token de cookies
+const { cookies } = useCookies();
+const token: string = cookies.get("token");
+
 const props = defineProps({
   // Define el tipo y si es requerida
   userId: {
     type: String,
-    default: null // Valor por defecto si no se proporciona
+    default: null, // Valor por defecto si no se proporciona
   },
-  numScripts:{
-    type:Number,
-    default:0
+  numScripts: {
+    type: Number,
+    default: 0,
   },
-  numPhotos:{
-    type:Number,
-    default:0
+  numPhotos: {
+    type: Number,
+    default: 0,
   },
-  numForums:{
-    type:Number,
-    default:0
-  }
-})
-const URL_Backend = import.meta.env.VITE_URL_BACKEND
+  numForums: {
+    type: Number,
+    default: 0,
+  },
+});
 
-const confirm = useConfirm()
-const toast = useToast()
+const confirm = useConfirm();
+const toast = useToast();
 
-const { cookies } = useCookies()
-const token = cookies.get('token')
+const displayedScripts = ref<any[]>([]);
+const nextScriptIndex = ref(0);
+const scriptsPerPage = 2;
 
-const displayedScripts = ref<any[]>([])
-const nextScriptIndex = ref(0)
-const scriptsPerPage = 2
+const scripts = ref<any[]>([]);
+const photos = ref<any[]>([]);
+const forums = ref<any[]>([]);
 
-const scripts = ref<any[]>([])
-const photos = ref<any[]>([])
-const forums = ref<any[]>([])
-
-const idUser = ref<string>('')
+const idUser = ref<string>("");
 
 // Función para ordenar los scripts por fecha de creación más reciente
 const sortScriptsByDate = () => {
   scripts.value.sort((a, b) => {
-    const dateA = new Date(a.dateCreated)
-    const dateB = new Date(b.dateCreated)
-    return dateB.getTime() - dateA.getTime()
-  })
-}
+    const dateA = new Date(a.dateCreated);
+    const dateB = new Date(b.dateCreated);
+    return dateB.getTime() - dateA.getTime();
+  });
+};
 
 const loadMoreScripts = () => {
-  const remainingScripts = scripts.value.slice(nextScriptIndex.value, nextScriptIndex.value + scriptsPerPage)
-  displayedScripts.value.push(...remainingScripts)
-  nextScriptIndex.value += scriptsPerPage
-}
+  const remainingScripts = scripts.value.slice(nextScriptIndex.value, nextScriptIndex.value + scriptsPerPage);
+  displayedScripts.value.push(...remainingScripts);
+  nextScriptIndex.value += scriptsPerPage;
+};
 
 // Esta función verifica si hay más scripts para mostrar
-const showLoadMoreButton = computed(() => nextScriptIndex.value < props.numScripts)
+const showLoadMoreButton = computed(() => nextScriptIndex.value < props.numScripts);
 
 watch(scripts, () => {
-  nextScriptIndex.value = 0
-  displayedScripts.value = []
-  loadMoreScripts()
-})
+  nextScriptIndex.value = 0;
+  displayedScripts.value = [];
+  loadMoreScripts();
+});
 
-const obtenerScripts = async (idParam?: string):Promise<void> => {
+const obtenerScripts = async (idParam?: string): Promise<void> => {
   try {
-    const endpoint = idParam ? `${URL_Backend}user?id=${idParam}` : `${URL_Backend}user?token=${token}`
+    const endpoint = idParam ? `${URL_Backend}user?id=${idParam}` : `${URL_Backend}user?token=${token}`;
     const response = await axios.get(endpoint, {
-      headers: { 'api-key': `${token}` },
-    })
-    const userId = response.data.users[0].id
+      headers: { "api-key": `${token}` },
+    });
+    const userId = response.data.users[0].id;
     try {
       const scriptResponse = await axios.get(`${URL_Backend}script?idUser=${userId}`, {
-        headers: { 'api-key': `${token}` }
-      })
-      scripts.value = scriptResponse.data.scripts
-      sortScriptsByDate()
+        headers: { "api-key": `${token}` },
+      });
+      scripts.value = scriptResponse.data.scripts;
+      sortScriptsByDate();
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
-}
-const obtenerForos = async (idParam?: string):Promise<void> => {
+};
+const obtenerForos = async (idParam?: string): Promise<void> => {
   try {
-    const endpoint = idParam ? `${URL_Backend}user?id=${idParam}` : `${URL_Backend}user?token=${token}`
+    const endpoint = idParam ? `${URL_Backend}user?id=${idParam}` : `${URL_Backend}user?token=${token}`;
     const response = await axios.get(endpoint, {
-      headers: { 'api-key': `${token}` },
-    })
-    const userId = response.data.users[0].id
+      headers: { "api-key": `${token}` },
+    });
+    const userId = response.data.users[0].id;
     try {
       const forumResponse = await axios.get(`${URL_Backend}forum?idUser=${userId}`, {
-        headers: { 'api-key': `${token}` }
-      })
-      forums.value = forumResponse.data.forums
+        headers: { "api-key": `${token}` },
+      });
+      forums.value = forumResponse.data.forums;
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
-}
-const obtenerFotos = async (idParam?: string):Promise<void> => {
+};
+const obtenerFotos = async (idParam?: string): Promise<void> => {
   try {
-    const endpoint = idParam ? `${URL_Backend}user?id=${idParam}` : `${URL_Backend}user?token=${token}`
+    const endpoint = idParam ? `${URL_Backend}user?id=${idParam}` : `${URL_Backend}user?token=${token}`;
     const response = await axios.get(endpoint, {
-      headers: { 'api-key': `${token}` },
-    })
-    idUser.value = response.data.users[0].id
+      headers: { "api-key": `${token}` },
+    });
+    idUser.value = response.data.users[0].id;
     try {
       const photoResponse = await axios.get(`${URL_Backend}photo?idUser=${idUser.value}`, {
-        headers: { 'api-key': `${token}` }
-      })
-      photos.value = photoResponse.data.photos
+        headers: { "api-key": `${token}` },
+      });
+      photos.value = photoResponse.data.photos;
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
-}
+};
 
 const cargarDatos = async () => {
-  await obtenerScripts(props.userId)
-  await obtenerFotos(props.userId)
-  await obtenerForos(props.userId)
-}
-watchEffect(cargarDatos)
-
+  await obtenerScripts(props.userId);
+  await obtenerFotos(props.userId);
+  await obtenerForos(props.userId);
+};
+watchEffect(cargarDatos);
 
 // Formatear el número de likes
 const formatLikes = (numLikes: number) => {
   if (numLikes >= 1000) {
-    return `${(numLikes / 1000).toFixed(1)}k`
+    return `${(numLikes / 1000).toFixed(1)}k`;
   } else {
-    return numLikes.toString()
+    return numLikes.toString();
   }
-}
-const emits = defineEmits(['cerrar'])
+};
+const emits = defineEmits(["cerrar"]);
 const eliminarScript = (idParam: any) => {
   confirm.require({
-    message: '¿Deseas eliminar este script?',
-    header: 'Confirmación',
-    icon: 'pi pi-info-circle',
-    rejectLabel: 'Cancelar',
-    acceptLabel: 'Eliminar',
-    rejectClass: 'p-button-secondary p-button-outlined',
-    acceptClass: 'p-button-danger',
+    message: "¿Deseas eliminar este script?",
+    header: "Confirmación",
+    icon: "pi pi-info-circle",
+    rejectLabel: "Cancelar",
+    acceptLabel: "Eliminar",
+    rejectClass: "p-button-secondary p-button-outlined",
+    acceptClass: "p-button-danger",
     accept: async () => {
       try {
-        await axios.delete(`${URL_Backend}script?id=${idParam}`, { headers: { 'api-key': `${token}` } })
+        await axios.delete(`${URL_Backend}script?id=${idParam}`, { headers: { "api-key": `${token}` } });
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
-      obtenerScripts()
-      emits('cerrar')
-      toast.add({ severity: 'info', summary: 'Confirmación', detail: 'Script eliminado', life: 3000 })
+      obtenerScripts();
+      emits("cerrar");
+      toast.add({ severity: "info", summary: "Confirmación", detail: "Script eliminado", life: 3000 });
     },
-    reject: () => {}
-  })
-}
+    reject: () => {},
+  });
+};
 const eliminarForo = (idParam: any) => {
   confirm.require({
-    message: '¿Deseas eliminar este foro?',
-    header: 'Confirmación',
-    icon: 'pi pi-info-circle',
-    rejectLabel: 'Cancelar',
-    acceptLabel: 'Eliminar',
-    rejectClass: 'p-button-secondary p-button-outlined',
-    acceptClass: 'p-button-danger',
+    message: "¿Deseas eliminar este foro?",
+    header: "Confirmación",
+    icon: "pi pi-info-circle",
+    rejectLabel: "Cancelar",
+    acceptLabel: "Eliminar",
+    rejectClass: "p-button-secondary p-button-outlined",
+    acceptClass: "p-button-danger",
     accept: async () => {
       try {
-        await axios.delete(`${URL_Backend}forum?id=${idParam}`, { headers: { 'api-key': `${token}` } })
+        await axios.delete(`${URL_Backend}forum?id=${idParam}`, { headers: { "api-key": `${token}` } });
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
-      obtenerForos()
-      emits('cerrar')
-      toast.add({ severity: 'info', summary: 'Confirmación', detail: 'Foro eliminado', life: 3000 })
+      obtenerForos();
+      emits("cerrar");
+      toast.add({ severity: "info", summary: "Confirmación", detail: "Foro eliminado", life: 3000 });
     },
-    reject: () => {}
-  })
-}
+    reject: () => {},
+  });
+};
 
 //------------------------Subir foto-------------------------------
-const showModal = ref(false)
-const selectedFile = ref(null)
-const imagen = ref<string | ArrayBuffer | null>('')
-const descripcion = ref('')
+const showModal = ref(false);
+const selectedFile = ref(null);
+const imagen = ref<string | ArrayBuffer | null>("");
+const descripcion = ref("");
 
 const handleFileChange = (event: any) => {
-  const file = event.target.files[0]
-  const reader = new FileReader()
+  const file = event.target.files[0];
+  const reader = new FileReader();
 
   reader.onloadend = () => {
-    imagen.value = reader.result
-  }
+    imagen.value = reader.result;
+  };
 
   if (file) {
-    reader.readAsDataURL(file)
-    selectedFile.value = file
-    showModal.value = true
+    reader.readAsDataURL(file);
+    selectedFile.value = file;
+    showModal.value = true;
   }
-}
+};
 
 const imageSrc = computed(() => {
-  if (typeof imagen.value === 'string') {
-    return imagen.value
+  if (typeof imagen.value === "string") {
+    return imagen.value;
   }
-  return ''
-})
+  return "";
+});
 const SavePhoto = () => {
   axios
     .post(
@@ -220,26 +223,26 @@ const SavePhoto = () => {
       {
         idUser: idUser.value,
         photo: imagen.value ? imagen.value : null,
-        description: descripcion.value ? descripcion.value : null
+        description: descripcion.value ? descripcion.value : null,
       },
-      { headers: { 'api-key': `${token}` } }
+      { headers: { "api-key": `${token}` } }
     )
     .then(() => {
-      showModal.value = false
-      obtenerFotos()
-      emits('cerrar')
+      showModal.value = false;
+      obtenerFotos();
+      emits("cerrar");
     })
     .catch((error) => {
-      console.error('Error:', error)
-    })
-}
+      console.error("Error:", error);
+    });
+};
 </script>
 
 <template>
   <Toast />
   <ConfirmDialog></ConfirmDialog>
   <input type="file" id="fileInput2" style="display: none" @change="handleFileChange" />
-  <TabView class="space-x-12 uppercase tracking-widest font-semibold text-xs text-gray-600 border-t">
+  <TabView class="uppercase tracking-widest font-semibold text-xs text-gray-600 border-t">
     <TabPanel>
       <template #header>
         <div class="flex align-items-center gap-2">
@@ -247,21 +250,21 @@ const SavePhoto = () => {
           <span class="font-bold white-space-nowrap">posts</span>
         </div>
         <div v-if="showModal" class="modal-container">
-          <div class="modal w-11/12 md:w-1/3">
-            <div class="modal-content p-4 md:p-6">
-              <h2 class="text-xl font-semibold mb-4">Subir Foto</h2>
-              <span class="close" @click="showModal = false">&times;</span>
+          <div class="modal w-11/12 md:w-1/3 rounded-lg shadow-lg">
+            <div class="modal-content p-4 md:p-6 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700">
+              <h2 class="text-xl font-semibold mb-4 text-stone-800 dark:text-stone-100">Subir Foto</h2>
+              <span class="close cursor-pointer text-stone-600 dark:text-stone-400" @click="showModal = false">&times;</span>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div class="flex flex-col items-center space-y-4">
                   <div class="relative mb-4">
                     <img v-if="selectedFile" :src="imageSrc" alt="Foto seleccionada" class="w-full h-auto rounded-lg" />
-                    <p v-else class="text-gray-500">Ninguna foto seleccionada</p>
+                    <p v-else class="text-stone-500 dark:text-stone-400">Ninguna foto seleccionada</p>
                   </div>
                 </div>
                 <div class="flex flex-col space-y-4">
-                  <textarea placeholder="Descripcion" v-model="descripcion" class="border p-2 rounded w-full h-32"></textarea>
-                  <button @click="SavePhoto" class="px-4 py-2 rounded bg-blue-500 text-white cursor-pointer hover:bg-blue-600 focus:outline-none transition-colors">Subir foto</button>
-                  <button @click="showModal = false" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">Cerrar</button>
+                  <textarea placeholder="Descripcion" v-model="descripcion" class="border border-stone-300 dark:border-stone-600 p-2 rounded w-full h-32 bg-stone-50 dark:bg-stone-800 text-stone-800 dark:text-stone-100"></textarea>
+                  <button @click="SavePhoto" class="px-4 py-2 rounded bg-stone-500 dark:bg-stone-700 text-white cursor-pointer hover:bg-stone-600 dark:hover:bg-stone-800 focus:outline-none transition-colors">Subir foto</button>
+                  <button @click="showModal = false" class="bg-stone-300 dark:bg-stone-600 hover:bg-stone-400 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-100 font-bold py-2 px-4 rounded">Cerrar</button>
                 </div>
               </div>
             </div>
@@ -273,7 +276,7 @@ const SavePhoto = () => {
           <div class="w-1/3 p-px md:px-3">
             <a :href="`#`">
               <article v-if="!props.userId" class="post bg-gray-200 text-white relative w-full h-full left-0 top-0 md:mb-6">
-                <label for="fileInput2" class="w-full h-full flex justify-center items-center bg-gray-300 cursor-pointer">
+                <label for="fileInput2" class="w-full h-full flex justify-center items-center bg-gray-300 rounded-full cursor-pointer">
                   <input type="file" id="fileInput2" style="display: none" @change="handleFileChange" />
                   <svg xmlns="http://www.w3.org/2000/svg" width="200" height="300" fill="currentColor" class="bi bi-plus-circle-dotted text-gray-500 text-7xl" viewBox="0 0 16 16">
                     <path
@@ -316,24 +319,23 @@ const SavePhoto = () => {
       <div v-if="numScripts == 0" class="m-0">No existen scripts actualmente</div>
       <div v-else>
         <ul class="space-y-4">
-          <li v-for="(script, index) in displayedScripts" :key="index" class="border border-gray-300 rounded">
+          <li v-for="(script, index) in displayedScripts" :key="index" class="border border-stone-300 rounded">
             <div class="flex items-center justify-between">
               <RouterLink :to="`/script/${script.id}`" class="flex-1">
-                <button class="w-full bg-white text-black px-4 py-2 rounded hover:bg-gray-200 transition-colors relative">
+                <button class="w-full bg-stone-50 text-stone-900 px-4 py-2 rounded hover:bg-stone-200 transition-colors relative">
                   <div class="flex justify-between items-center">
                     <div>
-                      <p class="font-bold text-xl">{{ script.title }}</p>
+                      <p class="font-bold text-stone-800 text-xl">{{ script.title }}</p>
                     </div>
-                    <p class="text-sm text-gray-600">{{ script.dateCreated }}</p>
+                    <p class="text-sm text-stone-600">{{ script.dateCreated }}</p>
                   </div>
                 </button>
               </RouterLink>
-              <button v-if="!props.userId" @click="eliminarScript(script.id)" class="w-16 h-16 text-gray-600 hover:text-red-600 transition-colors pi pi-trash ml-4"></button>
+              <button v-if="!props.userId" @click="eliminarScript(script.id)" class="w-16 h-16 text-red-600 hover:text-red-800 transition-colors pi pi-trash ml-4"></button>
             </div>
           </li>
         </ul>
-        <!-- Botón "Mostrar más" -->
-        <button v-if="showLoadMoreButton" @click="loadMoreScripts" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">Mostrar más</button>
+        <button v-if="showLoadMoreButton" @click="loadMoreScripts" class="w-full bg-stone-500 text-white px-4 py-2 rounded hover:bg-stone-600 transition-colors">Mostrar más</button>
       </div>
     </TabPanel>
     <TabPanel>
@@ -346,17 +348,17 @@ const SavePhoto = () => {
       <div v-if="numForums == 0" class="m-0">No existen foros actualmente</div>
       <div v-else>
         <div v-for="(foro, index) in forums" :key="index" class="my-4">
-          <div class="rounded-lg shadow-md overflow-hidden bg-white">
+          <div class="rounded-lg shadow-md overflow-hidden bg-stone-50">
             <RouterLink :to="`/foro/${foro.id}`">
-              <button class="w-full py-4 px-6 flex justify-between items-center bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold rounded-t-lg">
+              <button class="w-full py-4 px-6 flex justify-between items-center bg-gradient-to-r from-stone-500 to-stone-700 text-white font-semibold rounded-t-lg">
                 <div>
                   <p class="text-lg font-semibold">{{ foro.title }}</p>
-                  <p class="text-sm text-gray-200">{{ foro.question.length > 20 ? foro.question.slice(0, 20) + '...' : foro.question }}</p>
+                  <p class="text-sm text-stone-200">{{ foro.question.length > 20 ? foro.question.slice(0, 20) + "..." : foro.question }}</p>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-200">{{ foro.dateCreated }}</p>
-                  <p class="text-sm text-gray-200">{{ foro.type }}</p>
-                  <p class="text-sm text-gray-200">Numero de respuestas: {{ foro.numAnswers }}</p>
+                  <p class="text-sm text-stone-200">{{ foro.dateCreated }}</p>
+                  <p class="text-sm text-stone-200">{{ foro.type }}</p>
+                  <p class="text-sm text-stone-200">Numero de respuestas: {{ foro.numAnswers }}</p>
                 </div>
               </button>
             </RouterLink>
@@ -383,7 +385,6 @@ const SavePhoto = () => {
 }
 
 .modal-content {
-  background-color: #fff;
   padding: 20px; /* Ajuste de padding */
   border-radius: 8px; /* Ajuste de border-radius */
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Ajuste de box-shadow */

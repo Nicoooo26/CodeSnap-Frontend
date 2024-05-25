@@ -7,8 +7,12 @@ import { useRouter } from 'vue-router'
 import { useCookies } from 'vue3-cookies'
 import axios from 'axios'
 
+// Ruta del backend desde variables de entorno
 const URL_Backend = import.meta.env.VITE_URL_BACKEND
+
+// Usar cookies
 const { cookies } = useCookies()
+
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
 const router = useRouter()
@@ -176,7 +180,7 @@ const closePopup = () => {
           <span class="text-white pi pi-sun" v-if="isDark"></span>
           <span class="text-white pi pi-moon" v-else></span>
         </button>
-        <form id="login-form" class="shadow-md rounded px-8 pt-6 pb-8 mb-4 bg-stone-100 dark:bg-stone-700" :class="{ hidden: !loginVisible }" @submit.prevent="login">
+        <form id="login-form" class="shadow-md rounded px-8 pt-6 pb-8 mb-4 bg-stone-300 dark:bg-stone-700" :class="{ hidden: !loginVisible }" @submit.prevent="login">
           <div class="mb-4">
             <label>
               <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-bold mb-2 text-stone-500 dark:text-stone-300">Username</span>
@@ -187,16 +191,16 @@ const closePopup = () => {
           <div class="mb-6">
             <label>
               <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-bold mb-2 text-stone-500 dark:text-stone-300">Contraseña</span>
-              <input type="password" class="shadow appearance-none border rounded w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:shadow-outline text-stone-500 dark:text-stone-300 bg-stone-50 dark:bg-stone-800" id="password" v-model="passwordLogin" placeholder="Password" />
+              <input type="password" class="shadow appearance-none border rounded w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:shadow-outline text-stone-500 dark:text-stone-300 bg-stone-50 dark:bg-stone-800" id="passwordLogin" v-model="passwordLogin" placeholder="Password" />
               <p v-if="credencialesError" class="mt-1 text-pink-600 text-sm">Credenciales incorrectas.</p>
               <p v-if="passwordVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
           </div>
           <div class="flex items-center justify-between">
-            <button type="submit" class="text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline bg-stone-600 dark:bg-stone-300 hover:bg-stone-700 dark:hover:bg-stone-400 transition-colors duration-300 ease-in-out">Iniciar Sesión</button>
+            <button type="submit" class="text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline bg-stone-600 dark:text-stone-900 dark:bg-stone-300 hover:bg-stone-700 dark:hover:bg-stone-400 transition-colors duration-300 ease-in-out">Iniciar Sesión</button>
           </div>
         </form>
-        <form id="register-form" class="shadow-md rounded px-8 pt-6 pb-8 mb-4 bg-stone-100 dark:bg-stone-700" :class="{ hidden: loginVisible }" @submit.prevent="register">
+        <form id="register-form" class="shadow-md rounded px-8 pt-6 pb-8 mb-4 bg-stone-300 dark:bg-stone-700" :class="{ hidden: loginVisible }" @submit.prevent="register">
           <div class="mb-2">
             <label>
               <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-bold mb-2 text-stone-500 dark:text-stone-300">Username</span>
@@ -222,7 +226,7 @@ const closePopup = () => {
             </label>
           </div>
           <div class="flex items-center justify-between">
-            <button class="text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline bg-stone-600 dark:bg-stone-300 hover:bg-stone-700 dark:hover:bg-stone-400 transition-colors duration-300 ease-in-out" type="submit">Registrarse</button>
+            <button class="text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline bg-stone-600 dark:text-stone-900 dark:bg-stone-300 hover:bg-stone-700 dark:hover:bg-stone-400 transition-colors duration-300 ease-in-out" type="submit">Registrarse</button>
           </div>
         </form>
         <div class="flex items-center justify-center mt-6">

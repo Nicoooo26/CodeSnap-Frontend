@@ -2,7 +2,9 @@
 import { useCookies } from 'vue3-cookies';
 import { useRouter } from 'vue-router';
 
+//Usar cookies
 const { cookies } = useCookies();
+
 const router = useRouter();
 
 const handleLogout = () => {
