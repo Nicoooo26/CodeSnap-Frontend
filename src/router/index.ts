@@ -21,8 +21,8 @@ import { ref } from 'vue'
 
 const URL_Backend = import.meta.env.VITE_URL_BACKEND
 const { cookies } = useCookies()
-const role = ref()
-const blocked = ref()
+const role = ref<string>()
+const blocked = ref<number>()
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -118,7 +118,8 @@ const router = createRouter({
     }
   ]
 })
-const getUsers = async (token: any) => {
+
+const getUsers = async (token: any):Promise<void> => {
   try {
     const response = await axios.get(`${URL_Backend}user?token=${token}`, {
       headers: { 'api-key': `${token}` }
@@ -129,6 +130,7 @@ const getUsers = async (token: any) => {
     console.log(e)
   }
 }
+
 router.beforeEach(async (to, from, next) => {
   const token = cookies.get('token')
   if (token) await getUsers(token)

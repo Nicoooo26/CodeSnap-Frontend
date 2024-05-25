@@ -11,64 +11,68 @@ const URL_Backend = import.meta.env.VITE_URL_BACKEND
 const { cookies } = useCookies()
 const token: string = cookies.get('token')
 
-const users = ref()
-const forums = ref()
-const scripts = ref()
-const photos = ref()
-const loading = ref(true)
+//Variables reactivas
+const loading = ref<boolean>(true)
+const users = ref<any[]>([])
+const forums = ref<any[]>([])
+const scripts = ref<any[]>([])
+const photos = ref<any[]>([])
 
-// Fetch All Users
-const fetchUsers = async () => {
+// Obtiene los usuarios más recientes
+const getUsers = async (): Promise<void> => {
   try {
     const response = await axios.get(`${URL_Backend}user`, { headers: { 'api-key': `${token}` } })
-    users.value = response.data.users.sort((a: any, b: any) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()).slice(0, 5) 
+    users.value = response.data.users.sort((a: any, b: any) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()).slice(0, 5)
   } catch (e) {
     console.log(e)
   }
 }
 
-// Fetch Forums
-const fetchForums = async () => {
+// Obtiene los foros más recientes
+const getForums = async (): Promise<void> => {
   try {
     const response = await axios.get(`${URL_Backend}forum`, { headers: { 'api-key': `${token}` } })
-    forums.value = response.data.forums.sort((a: any, b: any) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()).slice(0, 5) 
+    forums.value = response.data.forums.sort((a: any, b: any) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()).slice(0, 5)
   } catch (e) {
     console.log(e)
   }
 }
 
-// Fetch Scripts
-const fetchScripts = async () => {
+// Obtiene los scripts más recientes
+const getScripts = async (): Promise<void> => {
   try {
     const response = await axios.get(`${URL_Backend}script`, { headers: { 'api-key': `${token}` } })
-    scripts.value = response.data.scripts.sort((a: any, b: any) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()).slice(0, 5) 
+    scripts.value = response.data.scripts.sort((a: any, b: any) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()).slice(0, 5)
   } catch (e) {
     console.log(e)
   }
 }
 
-// Fetch Photos
-const fetchPhotos = async () => {
+// Obtiene las fotos más recientes
+const getPhotos = async (): Promise<void> => {
   try {
     const response = await axios.get(`${URL_Backend}photo`, { headers: { 'api-key': `${token}` } })
-    photos.value = response.data.photos.slice(0, 4) 
+    photos.value = response.data.photos.slice(0, 4)
     loading.value = false
   } catch (e) {
     console.log(e)
   }
 }
 
+// Llama a las funciones de obtención de datos al montar el componente
 onMounted(() => {
-  fetchUsers()
-  fetchForums()
-  fetchScripts()
-  fetchPhotos()
-
+  getUsers()
+  getForums()
+  getScripts()
+  getPhotos()
 })
 </script>
 
 <template>
-  <div class="container mx-auto p-4">
+  <div v-if="loading" class="loading-overlay">
+    <ProgressSpinner />
+  </div>
+  <div v-else class="container mx-auto p-4">
     <div class="text-center my-8">
       <h1 class="text-4xl font-bold text-stone-800 dark:text-stone-200">Bienvenido a CodeSnap</h1>
       <p class="text-stone-600 dark:text-stone-400">La red social para programadores</p>
@@ -104,7 +108,8 @@ onMounted(() => {
           <ul>
             <li v-for="script in scripts" :key="script.id" class="mb-4 pb-2">
               <h3 class="text-xl font-semibold text-stone-800 dark:text-stone-200">{{ script.title }}</h3>
-              <pre class="bg-stone-100 dark:bg-stone-900 p-2 rounded text-stone-800 dark:text-stone-200">{{ decodeBase64(script.code).split('\n')[0] }}</pre>
+              <pre
+                class="bg-stone-100 dark:bg-stone-900 p-2 rounded text-stone-800 dark:text-stone-200">{{ decodeBase64(script.code).split('\n')[0] }}</pre>
               <p class="text-sm text-stone-500 dark:text-stone-400">Creado por usuario {{ script.idUser }} el {{ new Date(script.dateCreated).toLocaleDateString() }}</p>
             </li>
           </ul>
@@ -117,7 +122,8 @@ onMounted(() => {
           <div v-for="photo in photos" :key="photo.id" class="col-span-1">
             <div class="relative">
               <img :src="photo.photo" alt="Photo" class="w-full h-auto rounded-lg shadow-md" />
-              <div class="absolute bottom-0 left-0 bg-black dark:bg-white dark:bg-opacity-50  dark:text-black bg-opacity-50 text-white p-2 rounded-b-lg w-full">
+              <div
+                class="absolute bottom-0 left-0 bg-black dark:bg-white dark:bg-opacity-50  dark:text-black bg-opacity-50 text-white p-2 rounded-b-lg w-full">
                 <p class="text-sm">{{ photo.description }}</p>
                 <p class="text-xs">Subido por usuario {{ photo.idUser }}</p>
               </div>
@@ -126,9 +132,6 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div v-if="loading" class="loading-overlay">
-        <ProgressSpinner />
-      </div>
   </div>
 </template>
 

@@ -5,16 +5,14 @@ import AppFooter from '@/components/AppFooter.vue'
 </script>
 
 <template>
-    <div id="page-container" class="bg-stone-200 dark:bg-stone-800">
-        <AppHeader />
-        <RouterView id="content-wrap" class="bg-stone-200 dark:bg-stone-800" />
-        
-        <AppFooter id="footer" />
-    </div>
+  <div id="page-container" class="bg-stone-200 dark:bg-stone-800">
+    <AppHeader />
+    <RouterView id="content-wrap" class="bg-stone-200 dark:bg-stone-800" />
+    <AppFooter id="footer" />
+  </div>
 </template>
 
 <style scoped>
-
 #page-container {
   position: relative;
   min-height: 100vh;
@@ -29,7 +27,7 @@ import AppFooter from '@/components/AppFooter.vue'
 
 
 #footer {
-  margin-top: auto; 
+  margin-top: auto;
   width: 100%;
   height: 4.5rem;
 }

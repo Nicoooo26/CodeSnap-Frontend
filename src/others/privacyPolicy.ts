@@ -1,4 +1,4 @@
-const privacyPolicy = `En CodeSnap, nos tomamos muy en serio tu privacidad. Creemos que la protección de
+const privacyPolicy:string = `En CodeSnap, nos tomamos muy en serio tu privacidad. Creemos que la protección de
 tus datos es fundamental para construir una comunidad segura y confiable. Por eso, queremos explicarte de manera
 clara y transparente cómo recopilamos, utilizamos y protegemos tu información. Cuando te registras en CodeSnap, recopilamos cierta información personal, como tu nombre, dirección de correo
 electrónico, fecha de nacimiento y ubicación. Esta información nos ayuda a crear y gestionar tu cuenta, así como a

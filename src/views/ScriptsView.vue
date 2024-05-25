@@ -21,23 +21,16 @@ const scripts = ref<any[]>([])
 
 // Mostrar notificación de éxito
 const toast = useToast()
-const showSuccess = (): void => {
-  toast.add({ severity: 'success', summary: 'Script creado', detail: 'El script ha sido creado correctamente', life: 3000 })
-}
+const showSuccess = (): void => toast.add({ severity: 'success', summary: 'Script creado', detail: 'El script ha sido creado correctamente', life: 3000 })
+
 
 // Control de modal
 const mostrarModal = ref<boolean>(false)
-const abrirModal = (): void => {
-  mostrarModal.value = true
-}
-const cerrarModal = (): void => {
-  mostrarModal.value = false
-}
+const abrirModal = (): void => { mostrarModal.value = true }
+const cerrarModal = (): void => { mostrarModal.value = false }
 const controlarEmit = (mssg: string): void => {
   cerrarModal()
-  if (mssg == 'ok') {
-    showSuccess()
-  }
+  if (mssg == 'ok') showSuccess()
 }
 
 // Obtener ID de usuario
@@ -54,9 +47,7 @@ const getIDUser = async (): Promise<void> => {
 const getScripts = async (): Promise<void> => {
   loading.value = true
   try {
-    const response = await axios.get(`${URL_Backend}script`, {
-      headers: { 'api-key': `${token}` }
-    })
+    const response = await axios.get(`${URL_Backend}script`, { headers: { 'api-key': `${token}` } })
     scripts.value = response.data.scripts
     sortScriptsByDate()
     await getUsername()
@@ -66,12 +57,10 @@ const getScripts = async (): Promise<void> => {
 }
 
 // Obtener nombres de usuarios de los scripts
-const getUsername = async () => {
+const getUsername = async (): Promise<void> => {
   for (const respuesta of scripts.value) {
     try {
-      const response = await axios.get(`${URL_Backend}user?id=${respuesta.idUser}`, {
-        headers: { 'api-key': `${token}` }
-      })
+      const response = await axios.get(`${URL_Backend}user?id=${respuesta.idUser}`, { headers: { 'api-key': `${token}` } })
       respuesta.username = response.data.users[0].username
       loading.value = false
     } catch (e) {
@@ -105,25 +94,30 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container mx-auto p-4">
+  <div v-if="loading" class="loading-overlay">
+    <ProgressSpinner />
+  </div>
+  <div v-else class="container mx-auto p-4">
     <Toast />
     <h1 class="text-3xl font-bold mb-8 text-center text-stone-800 dark:text-stone-300">Scripts de la Comunidad</h1>
-    <button @click="abrirModal" class="bg-stone-700 dark:bg-stone-200 dark:hover:bg-stone-500 dark:text-stone-800 text-stone-100 px-6 py-3 rounded-md mb-8 hover:bg-opacity-80 block mx-auto">Subir Script</button>
-    <input v-model="searchQuery" type="text" placeholder="Buscar por título..." class="mb-8 px-4 py-2 border border-stone-500 dark:bg-stone-600 dark:text-stone-100 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-stone-800" />
+    <button @click="abrirModal"
+      class="bg-stone-700 dark:bg-stone-200 dark:hover:bg-stone-500 dark:text-stone-800 text-stone-100 px-6 py-3 rounded-md mb-8 hover:bg-opacity-80 block mx-auto">Subir
+      Script</button>
+    <input v-model="searchQuery" type="text" placeholder="Buscar por título..."
+      class="mb-8 px-4 py-2 border border-stone-500 dark:bg-stone-600 dark:text-stone-100 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-stone-800" />
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div v-for="script in filteredScripts" :key="script.id" class="bg-stone-50 rounded-lg dark:bg-stone-900 shadow-md border border-stone-300 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl">
+      <div v-for="script in filteredScripts" :key="script.id"
+        class="bg-stone-50 rounded-lg dark:bg-stone-900 shadow-md border border-stone-300 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl">
         <RouterLink :to="`/script/${script.id}`" class="block p-6">
           <h2 class="text-lg font-semibold mb-4 dark:text-stone-100">{{ script.title }}</h2>
           <p class="text-stone-500">{{ new Date(script.dateCreated).toLocaleDateString() }}</p>
           <p class="text-stone-500">Creado por {{ script.username }}</p>
-          <code class="block mt-4 text-stone-600 overflow-hidden whitespace-nowrap overflow-ellipsis">{{ decodeBase64(script.code).split('\n')[0] }}...</code>
+          <code
+            class="block mt-4 text-stone-600 overflow-hidden whitespace-nowrap overflow-ellipsis">{{ decodeBase64(script.code).split('\n')[0] }}...</code>
         </RouterLink>
       </div>
     </div>
     <CrearScriptComponent v-if="mostrarModal" @cerrar="controlarEmit" />
-    <div v-if="loading" class="loading-overlay">
-      <ProgressSpinner />
-    </div>
   </div>
 </template>
 

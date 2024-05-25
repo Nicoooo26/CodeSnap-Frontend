@@ -37,7 +37,6 @@ const getUsers = async () => {
       headers: { 'api-key': `${token}` }
     })
     username.value = response.data.users[0].username
-    console.log(username.value)
   } catch (e) {
     console.log(e)
   }

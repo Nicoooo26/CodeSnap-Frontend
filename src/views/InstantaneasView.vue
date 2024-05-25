@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, type RouteLocationNormalizedLoaded } from 'vue-router';
 import axios from 'axios';
 import { useCookies } from 'vue3-cookies';
 
-// Importar la URL del backend desde el entorno
-const URL_Backend = import.meta.env.VITE_URL_BACKEND;
-const { cookies } = useCookies();
-const token = cookies.get('token');
+// Ruta del backend desde variables de entorno
+const URL_Backend = import.meta.env.VITE_URL_BACKEND
 
-const route = useRoute();
-const photoId = route.params.id as string;
+// Obtener token de cookies
+const { cookies } = useCookies()
+const token: string = cookies.get('token')
+
+const route:RouteLocationNormalizedLoaded = useRoute()
+const photoId:string|string[] = route.params.id 
 
 // Refs para almacenar los datos de la foto
 const photos = ref<any[]>([]); // Cambiado a un array de fotos
