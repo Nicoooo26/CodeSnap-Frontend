@@ -34,65 +34,70 @@ const showSuccess = (): void => toast.add({ severity: 'success', summary: 'Respu
 // Función para obtener datos del foro desde el backend
 const getForum = async (): Promise<void> => {
   try {
-    const response = await axios.get(`${URL_Backend}forum?id=${id}`, { headers: { 'api-key': `${token}` } });
-    dataForum.value = response.data.forums[0];
+    const response = await axios.get(`${URL_Backend}forum?id=${id}`, { headers: { 'api-key': `${token}` } })
+    dataForum.value = response.data.forums[0]
   } catch (e) {
-    console.log(e);
+    console.log(e)
   }
-};
+}
 
 // Función para obtener el ID del usuario desde el backend
 const getUserID = async (): Promise<void> => {
   try {
-    const response = await axios.get(`${URL_Backend}user?token=${token}`, { headers: { 'api-key': `${token}` } });
-    idUser.value = response.data.users[0].id; // Almacena el ID del usuario
+    const response = await axios.get(`${URL_Backend}user?token=${token}`, { headers: { 'api-key': `${token}` } })
+    idUser.value = response.data.users[0].id // Almacena el ID del usuario
   } catch (e) {
-    console.log(e);
+    console.log(e)
   }
-};
+}
 
 // Función para obtener respuestas del foro desde el backend
 const getAnswers = async (): Promise<void> => {
   try {
-    const response = await axios.get(`${URL_Backend}answer?idForum=${id}`, { headers: { 'api-key': `${token}` } });
-    answers.value = response.data.answers.sort((a: any, b: any) => new Date(b.answerDate).getTime() - new Date(a.answerDate).getTime()); // Ordena las respuestas por fecha
-    await getUsernames(); // Obtiene los nombres de usuario
-    loading.value = false;
+    const response = await axios.get(`${URL_Backend}answer?idForum=${id}`, { headers: { 'api-key': `${token}` } })
+    answers.value = response.data.answers.sort((a: any, b: any) => new Date(b.answerDate).getTime() - new Date(a.answerDate).getTime()) // Ordena las respuestas por fecha
+    await getUsernames() // Obtiene los nombres de usuario
+    loading.value = false
   } catch (e) {
-    console.log(e);
-    loading.value = false;
+    console.log(e)
+    loading.value = false
   }
-};
+}
 
 // Función para enviar una respuesta al foro
 const sendResponse = async (): Promise<void> => {
   try {
-    if (!responseNow.value || responseNow.value == '') { return; } // Verifica que haya una respuesta
-    await axios.post(`${URL_Backend}answer`, {
-      idUser: idUser.value,
-      idForum: id,
-      answer: btoa(responseNow.value)
-    }, { headers: { 'api-key': `${token}` } }
-    );
-    responseNow.value = '';
-    showSuccess();
-    getAnswers();
+    if (!responseNow.value || responseNow.value == '') {
+      return
+    } // Verifica que haya una respuesta
+    await axios.post(
+      `${URL_Backend}answer`,
+      {
+        idUser: idUser.value,
+        idForum: id,
+        answer: btoa(responseNow.value)
+      },
+      { headers: { 'api-key': `${token}` } }
+    )
+    responseNow.value = ''
+    showSuccess()
+    getAnswers()
   } catch (e) {
-    console.log(e);
+    console.log(e)
   }
-};
+}
 
 // Función para obtener nombres de usuarios para las respuestas
 const getUsernames = async (): Promise<void> => {
   for (const respuesta of answers.value) {
     try {
-      const response = await axios.get(`${URL_Backend}user?id=${respuesta.idUser}`, { headers: { 'api-key': `${token}` } });
-      respuesta.username = response.data.users[0].username; // Asigna el nombre de usuario a la respuesta
+      const response = await axios.get(`${URL_Backend}user?id=${respuesta.idUser}`, { headers: { 'api-key': `${token}` } })
+      respuesta.username = response.data.users[0].username // Asigna el nombre de usuario a la respuesta
     } catch (e) {
-      console.log(e);
+      console.log(e)
     }
   }
-};
+}
 
 // Ejecutar funciones al montar el componente
 onMounted(() => {
@@ -100,38 +105,29 @@ onMounted(() => {
   getForum()
   getUserID()
 })
-
 </script>
 
 <template>
   <div v-if="loading" class="loading-overlay">
     <ProgressSpinner />
   </div>
-  <div v-else class="container mx-auto flex flex-col h-screen">
+  <div v-else class="container mx-auto flex flex-col h-screen p-4">
     <Toast />
-    <div class="flex justify-between mb-2 mt-2">
-      <h1 class="text-2xl font-bold uppercase dark:text-stone-50">{{ dataForum.title }}</h1>
-      <button @click="goBack"
-        class="bg-stone-700 hover:bg-stone-600 text-stone-50 font-semibold py-2 px-4 rounded-full focus:outline-none transform transition">
-        Volver
-      </button>
+    <div class="flex flex-col md:flex-row justify-between mb-4 mt-2">
+      <h1 class="text-2xl font-bold uppercase dark:text-stone-50 mb-2 md:mb-0">{{ dataForum.title }}</h1>
+      <button @click="goBack" class="bg-stone-700 hover:bg-stone-600 text-stone-50 font-semibold py-2 px-4 rounded-full focus:outline-none transform transition">Volver</button>
     </div>
-    <div
-      class="bg-stone-200 dark:bg-stone-700 border border-stone-500 text-stone-700 dark:text-stone-50 rounded-lg p-2 mb-2 flex flex-col justify-center items-center">
-      <div class="text-lg font-semibold">{{ dataForum.question }}</div>
-      <div class="text-stone-600 dark:text-stone-300 text-sm mt-1">{{ dataForum.dateCreated }}</div>
+    <div class="bg-stone-200 dark:bg-stone-700 border border-stone-500 text-stone-700 dark:text-stone-50 rounded-lg p-4 mb-4">
+      <div class="text-lg font-semibold text-center md:text-left">{{ dataForum.question }}</div>
+      <div class="text-stone-600 dark:text-stone-300 text-sm mt-1 text-center md:text-left">{{ dataForum.dateCreated }}</div>
     </div>
-    <form @submit.prevent="sendResponse" class="mb-4 flex items-center">
-      <textarea type="text" v-model="responseNow"
-        class="border border-stone-300 dark:border-stone-600 rounded-lg p-2 mr-2 w-3/4 resize-none dark:bg-stone-800 dark:text-stone-50"
-        placeholder="Escribe tu respuesta aquí..." rows="1"></textarea>
-      <button type="submit" class="bg-stone-500 dark:bg-stone-700 text-stone-50 rounded-lg p-2">Enviar
-        respuesta</button>
+    <form @submit.prevent="sendResponse" class="mb-4 flex flex-col md:flex-row items-stretch md:items-center">
+      <textarea type="text" v-model="responseNow" class="border border-stone-300 dark:border-stone-600 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-3/4 resize-none dark:bg-stone-800 dark:text-stone-50" placeholder="Escribe tu respuesta aquí..." rows="1"></textarea>
+      <button type="submit" class="bg-stone-500 dark:bg-stone-700 text-stone-50 rounded-lg p-2 w-full md:w-auto">Enviar respuesta</button>
     </form>
     <div class="overflow-auto mt-6" :style="{ maxHeight: 'calc(80vh - 16rem)' }">
-      <div v-for="(answer, index) in answers" :key="index"
-        class="respuesta bg-stone-50 dark:bg-stone-700 shadow-md rounded-lg p-4 mb-4 max-w-full">
-        <pre class="text-stone-800 dark:text-stone-50 break-all">{{ decodeBase64(answer.answer) }}</pre>
+      <div v-for="(answer, index) in answers" :key="index" class="respuesta bg-stone-50 dark:bg-stone-700 shadow-md rounded-lg p-4 mb-4 max-w-full break-words">
+        <pre class="text-stone-800 dark:text-stone-50">{{ decodeBase64(answer.answer) }}</pre>
         <div class="text-stone-600 dark:text-stone-300 text-sm mt-1">{{ answer.answerDate }}</div>
         <div class="text-stone-600 dark:text-stone-300 text-sm mt-1">Respuesta de {{ answer.username }}</div>
       </div>

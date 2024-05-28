@@ -118,7 +118,7 @@ watch(
             <h1 class="font-semibold">{{ data.fullname }}</h1>
             <p class="text-stone-400 dark:text-stone-300">{{ `En CodeSnap desde el ${data.dateCreated}` }}</p>
             <span class="underline">{{ data.location }}</span>
-            <p>Este usuario nació en {{ data.birthdate }}</p>
+            <p v-if="data.birthdate !== '0000-00-00'">Este usuario nació en {{ data.birthdate }}</p>
             <p>{{ data.description }}</p>
           </div>
         </header>

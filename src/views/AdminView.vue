@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import InputText from 'primevue/inputtext'
-import Button from 'primevue/button'
 import { FilterMatchMode } from 'primevue/api'
 import { useCookies } from 'vue3-cookies'
 
@@ -71,52 +67,40 @@ onMounted(() => {
   </div>
   <div v-else class="bg-stone-200 dark:bg-stone-800">
     <div class="container mx-auto p-4">
-      <h1 class="text-4xl font-bold text-center mb-4 dark:text-stone-200 text-stone-800">Admin - Gestión de Usuarios
-      </h1>
-      <div class="card mt-20">
-        <DataTable v-model:filters="filters" :value="users" paginator removableSort :rows="5" dataKey="id"
-          filterDisplay="row" :globalFilterFields="['username', 'id', 'email']">
+      <h1 class="text-4xl font-bold text-center mb-4 dark:text-stone-200 text-stone-800">Admin - Gestión de Usuarios</h1>
+      <div class="card mt-10 mb-0">
+        <DataTable v-model:filters="filters" :value="users" paginator removableSort :rows="5" dataKey="id" filterDisplay="row" :globalFilterFields="['username', 'id', 'email']">
           <template #header>
             <div class="flex justify-end mb-4">
               <div class="relative w-full md:w-1/2 lg:w-1/3">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                   <i class="pi pi-search text-gray-400"></i>
                 </span>
-                <InputText v-model="filters.global.value" placeholder="Buscar"
-                  class="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-stone-400 focus:outline-none focus:border-stone-900 transition duration-200" />
+                <InputText v-model="filters.global.value" placeholder="Buscar" class="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-stone-400 focus:outline-none focus:border-stone-900 transition duration-200" />
               </div>
             </div>
           </template>
-
           <template #empty> No se encontraron usuarios. </template>
           <Column field="id" header="ID" sortable style="min-width: 6rem"></Column>
           <Column field="username" header="Username" sortable style="min-width: 12rem">
-
             <template #filter="{ filterModel, filterCallback }">
-              <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter"
-                placeholder="Buscar por username" />
+              <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter" placeholder="Buscar por username" />
             </template>
           </Column>
           <Column field="email" header="Email" sortable style="min-width: 12rem">
-
             <template #filter="{ filterModel, filterCallback }">
-              <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter"
-                placeholder="Buscar por email" />
+              <InputText v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter" placeholder="Buscar por email" />
             </template>
           </Column>
           <Column field="dateCreated" header="Fecha de Creación" sortable style="min-width: 12rem">
-
             <template #body="{ data }">
               {{ new Date(data.dateCreated).toLocaleDateString() }}
             </template>
           </Column>
           <Column header="Acciones" style="min-width: 12rem">
-
             <template #body="{ data }">
-              <Button v-if="data.blocked == 0" label="Bloquear cuenta" icon="pi pi-lock"
-                class="p-button-danger text-red-600" @click="blockUser(data.id)" />
-              <Button v-else label="Desbloquear cuenta" icon="pi pi-unlock" class="p-button-success text-green-600"
-                @click="unblockUser(data.id)" />
+              <Button v-if="data.blocked == 0" label="Bloquear cuenta" icon="pi pi-lock" class="p-button-danger text-red-600" @click="blockUser(data.id)" />
+              <Button v-else label="Desbloquear cuenta" icon="pi pi-unlock" class="p-button-success text-green-600" @click="unblockUser(data.id)" />
             </template>
           </Column>
         </DataTable>

@@ -15,7 +15,6 @@ const token: string = cookies.get('token')
 
 // Variables reactivas
 const loading = ref<boolean>(true)
-const id = ref<string>('')
 const searchQuery = ref<string>('')
 const scripts = ref<any[]>([])
 
@@ -30,16 +29,9 @@ const abrirModal = (): void => { mostrarModal.value = true }
 const cerrarModal = (): void => { mostrarModal.value = false }
 const controlarEmit = (mssg: string): void => {
   cerrarModal()
-  if (mssg == 'ok') showSuccess()
-}
-
-// Obtener ID de usuario
-const getIDUser = async (): Promise<void> => {
-  try {
-    const response = await axios.get(`${URL_Backend}user?token=${token}`, { headers: { 'api-key': `${token}` } })
-    id.value = response.data.users[0].id
-  } catch (e) {
-    console.log(e)
+  if (mssg == 'ok'){
+    showSuccess()
+    getScripts()
   }
 }
 
@@ -82,14 +74,13 @@ const sortScriptsByDate = (): void => {
 // Filtrar scripts
 const filteredScripts = computed(() => {
   return scripts.value.filter((script) => {
-    return script.idUser !== id.value && script.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+    return script.title.toLowerCase().includes(searchQuery.value.toLowerCase())
   })
 })
 
 // Obtener datos al montar el componente
 onMounted(() => {
   getScripts()
-  getIDUser()
 })
 </script>
 
@@ -105,7 +96,7 @@ onMounted(() => {
       Script</button>
     <input v-model="searchQuery" type="text" placeholder="Buscar por título..."
       class="mb-8 px-4 py-2 border border-stone-500 dark:bg-stone-600 dark:text-stone-100 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-stone-800" />
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
       <div v-for="script in filteredScripts" :key="script.id"
         class="bg-stone-50 rounded-lg dark:bg-stone-900 shadow-md border border-stone-300 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl">
         <RouterLink :to="`/script/${script.id}`" class="block p-6">
@@ -120,6 +111,7 @@ onMounted(() => {
     <CrearScriptComponent v-if="mostrarModal" @cerrar="controlarEmit" />
   </div>
 </template>
+
 
 <style scoped>
 .loading-overlay {

@@ -18,22 +18,11 @@ const lenguage:string|string[] = route.params.lenguaje
 
 //Variables reactivas
 const forums = ref<any[]>([])
-const id = ref<string>('')
 const searchQuery = ref<string>('')
 const loading = ref<boolean>(true)
 
 //Volver atrás
 const goBack = (): void => router.go(-1)
-
-// Obtener ID de usuario
-const getIDUser = async (): Promise<void> => {
-  try {
-    const response = await axios.get(`${URL_Backend}user?token=${token}`, { headers: { 'api-key': `${token}` } })
-    id.value = response.data.users[0].id
-  } catch (e) {
-    console.log(e)
-  }
-}
 
 //Obtener foros del tipo de lenguaje
 const getForums = async (): Promise<void> => {
@@ -50,13 +39,12 @@ const getForums = async (): Promise<void> => {
 //Filtrar foros que no sean del usuario actual 
 const filteredForums = computed(() => {
   return forums.value.filter((foro) => {
-    return foro.idUser !== id.value && foro.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+    return foro.title.toLowerCase().includes(searchQuery.value.toLowerCase())
   })
 })
 
 onMounted(() => {
   getForums()
-  getIDUser()
 })
 </script>
 

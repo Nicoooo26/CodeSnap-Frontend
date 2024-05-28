@@ -27,7 +27,6 @@ import AppFooter from '@/components/AppFooter.vue'
 
 
 #footer {
-  margin-top: auto;
   width: 100%;
   height: 4.5rem;
 }

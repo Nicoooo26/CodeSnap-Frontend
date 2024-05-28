@@ -17,13 +17,13 @@ const isDark = useDark()
 const toggleDark = useToggle(isDark)
 const router = useRouter()
 
+//Variables reactivas
 const loginVisible = ref(true)
 const usernameLogin = ref('')
 const passwordLogin = ref('')
 const usernameRegistro = ref('')
 const emailRegistro = ref('')
 const passwordRegistro = ref('')
-
 const emailError = ref(false)
 const passwordError = ref(false)
 const usernameError = ref(false)
@@ -34,9 +34,14 @@ const passwordVacio = ref(false)
 const credencialesError = ref(false)
 const usuarioExistente = ref(false)
 
-const toggleButtonText = computed(() => { return loginVisible.value ? '¿No tienes una cuenta? Regístrate' : '¿Tienes una cuenta? Inicia Sesión' })
-const titleView = computed(() => { return loginVisible.value ? 'INICIAR SESIÓN' : 'REGISTRO' })
+const toggleButtonText = computed(() => {
+  return loginVisible.value ? '¿No tienes una cuenta? Regístrate' : '¿Tienes una cuenta? Inicia Sesión'
+})
+const titleView = computed(() => {
+  return loginVisible.value ? 'INICIAR SESIÓN' : 'REGISTRO'
+})
 
+//Cambio entre login y registro.Limpia los campos
 const toggleForm = () => {
   loginVisible.value = !loginVisible.value
   usernameRegistro.value = ''
@@ -52,7 +57,8 @@ const toggleForm = () => {
   usernameVacio.value = false
 }
 
-const login = () => {
+//Función para el login con validaciones de por medio
+const login = async () => {
   if (passwordLogin.value === '') {
     passwordVacio.value = true
   } else {
@@ -64,24 +70,24 @@ const login = () => {
     usernameVacio.value = false
   }
   if (passwordVacio.value === false && usernameVacio.value === false) {
-    axios
-      .post(`${URL_Backend}auth`, {
+    try {
+      const response = await axios.post(`${URL_Backend}auth`, {
         username: usernameLogin.value,
         password: passwordLogin.value
       })
-      .then((response) => {
-        cookies.set('token', response.data.token)
-        router.push({ name: 'home' })
-      })
-      .catch((e) => {
-        credencialesError.value = true
-        setTimeout(() => {
-          credencialesError.value = false
-        }, 5000)
-      })
+      cookies.set('token', response.data.token)
+      router.push({ name: 'home' })
+    } catch (e) {
+      console.log(e)
+      credencialesError.value = true
+      setTimeout(() => {
+        credencialesError.value = false
+      }, 5000)
+    }
   }
 }
 
+//Función para el registro con validaciones de por medio
 const register = async () => {
   if (usernameRegistro.value === '') {
     usernameVacio.value = true
@@ -117,7 +123,6 @@ const register = async () => {
         password: passwordRegistro.value,
         email: emailRegistro.value
       })
-
       // Registro exitoso, muestra la alerta de éxito
       showPopup.value = true
       loginVisible.value = true
@@ -144,7 +149,7 @@ const closePopup = () => {
 </script>
 
 <template>
-  <div id="app" class="flex h-screen dark:bg-stone-800">
+  <div id="app" class="flex flex-col h-screen dark:bg-stone-800 md:flex-row">
     <div v-if="showPopup" id="toast-success"
       class="absolute top-4 left-10 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
       role="alert">
@@ -168,99 +173,79 @@ const closePopup = () => {
         </svg>
       </button>
     </div>
-    <div class="w-full md:w-1/2 flex flex-col justify-center px-8">
+    <div class="w-full md:w-1/2 flex flex-col justify-center px-4 md:px-8 mt-16 md:mt-0">
       <div class="flex flex-col items-center mb-8">
-        <h1 class="text-4xl font-bold mb-4 text-stone-500 dark:text-stone-300">Bienvenido a CodeSnap</h1>
-        <div
-          class="w-40 h-40 mb-4 flex items-center justify-center rounded-full bg-white border border-stone-500 dark:border-stone-300">
-          <img src="/logo.jpg" alt="Descripción de la imagen" class="w-32 h-32" />
+        <h1 class="text-2xl md:text-4xl font-bold mb-4 text-stone-500 dark:text-stone-300">Bienvenido a CodeSnap</h1>
+        <div class="w-24 h-24 md:w-40 md:h-40 mb-4 flex items-center justify-center rounded-full bg-white border border-stone-500 dark:border-stone-300">
+          <img src="/logo.jpg" alt="Descripción de la imagen" class="w-20 h-20 md:w-32 md:h-32" />
         </div>
-
-        <p class="text-lg text-center text-stone-500 dark:text-stone-300">Descubre una plataforma para desarrolladores
-          donde puedes compartir tus ideas, código y experiencias de manera fácil y rápida.</p>
+        <p class="text-sm md:text-lg text-center text-stone-500 dark:text-stone-300">Descubre una plataforma para desarrolladores donde puedes compartir tus ideas, código y experiencias de manera fácil y rápida.</p>
       </div>
     </div>
-    <div class="w-1/2 flex justify-center items-center">
-      <div class="max-w-md w-full">
-        <h2 class="font-bold text-2xl text-stone-500 dark:text-stone-300">
+
+    <div class="w-full md:w-1/2 flex justify-center items-center">
+      <div class="max-w-md w-full px-4 md:px-0">
+        <h2 class="font-bold text-xl md:text-2xl text-stone-500 dark:text-stone-300">
           {{ titleView }}
         </h2>
-        <button @click="toggleDark()"
-          class="absolute top-4 right-4 rounded-full px-3 py-2 bg-stone-500 dark:bg-stone-700">
+        <button @click="toggleDark()" class="absolute top-4 right-4 rounded-full px-3 py-2 bg-stone-500 dark:bg-stone-700">
           <span class="text-white pi pi-sun" v-if="isDark"></span>
           <span class="text-white pi pi-moon" v-else></span>
         </button>
-        <form id="login-form" class="shadow-md rounded px-8 pt-6 pb-8 mb-4 bg-stone-300 dark:bg-stone-700"
-          :class="{ hidden: !loginVisible }" @submit.prevent="login">
+
+        <form id="login-form" class="shadow-md rounded px-4 pt-6 pb-8 mb-4 bg-stone-300 dark:bg-stone-700" :class="{ hidden: !loginVisible }" @submit.prevent="login">
           <div class="mb-4">
             <label>
-              <span
-                class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-bold mb-2 text-stone-500 dark:text-stone-300">Username</span>
-              <input type="text"
-                class="shadow appearance-none border rounded w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:shadow-outline text-stone-500 dark:text-stone-300 bg-stone-50 dark:bg-stone-800"
-                id="usernameLogin" v-model="usernameLogin" placeholder="Username" />
+              <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-bold mb-2 text-stone-500 dark:text-stone-300">Username</span>
+              <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:shadow-outline text-stone-500 dark:text-stone-300 bg-stone-50 dark:bg-stone-800" id="usernameLogin" v-model="usernameLogin" placeholder="Username" />
               <p v-if="usernameVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
           </div>
           <div class="mb-6">
             <label>
-              <span
-                class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-bold mb-2 text-stone-500 dark:text-stone-300">Contraseña</span>
-              <input type="password"
-                class="shadow appearance-none border rounded w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:shadow-outline text-stone-500 dark:text-stone-300 bg-stone-50 dark:bg-stone-800"
-                id="passwordLogin" v-model="passwordLogin" placeholder="Password" />
+              <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-bold mb-2 text-stone-500 dark:text-stone-300">Contraseña</span>
+              <input type="password" class="shadow appearance-none border rounded w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:shadow-outline text-stone-500 dark:text-stone-300 bg-stone-50 dark:bg-stone-800" id="passwordLogin" v-model="passwordLogin" placeholder="Password" />
               <p v-if="credencialesError" class="mt-1 text-pink-600 text-sm">Credenciales incorrectas.</p>
               <p v-if="passwordVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
           </div>
           <div class="flex items-center justify-between">
-            <button type="submit"
-              class="text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline bg-stone-600 dark:text-stone-900 dark:bg-stone-300 hover:bg-stone-700 dark:hover:bg-stone-400 transition-colors duration-300 ease-in-out">Iniciar
-              Sesión</button>
+            <button type="submit" class="text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline bg-stone-600 dark:text-stone-900 dark:bg-stone-300 hover:bg-stone-700 dark:hover:bg-stone-400 transition-colors duration-300 ease-in-out">Iniciar Sesión</button>
           </div>
         </form>
-        <form id="register-form" class="shadow-md rounded px-8 pt-6 pb-8 mb-4 bg-stone-300 dark:bg-stone-700"
-          :class="{ hidden: loginVisible }" @submit.prevent="register">
+
+        <form id="register-form" class="shadow-md rounded px-4 pt-6 pb-8 mb-4 bg-stone-300 dark:bg-stone-700" :class="{ hidden: loginVisible }" @submit.prevent="register">
           <div class="mb-2">
             <label>
-              <span
-                class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-bold mb-2 text-stone-500 dark:text-stone-300">Username</span>
-              <input type="text"
-                class="shadow appearance-none border rounded w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:shadow-outline text-stone-500 dark:text-stone-300 bg-stone-50 dark:bg-stone-800"
-                id="username" v-model="usernameRegistro" placeholder="Username" />
+              <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-bold mb-2 text-stone-500 dark:text-stone-300">Username</span>
+              <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:shadow-outline text-stone-500 dark:text-stone-300 bg-stone-50 dark:bg-stone-800" id="username" v-model="usernameRegistro" placeholder="Username" />
               <p v-if="usernameError" class="mt-1 text-pink-600 text-sm">Solo se permiten números y letras.</p>
               <p v-if="usernameVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
           </div>
           <div class="mb-4">
             <label>
-              <span
-                class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-bold mb-2 text-stone-500 dark:text-stone-300">Email</span>
-              <input type="email"
-                class="shadow appearance-none border rounded w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:shadow-outline text-stone-500 dark:text-stone-300 bg-stone-50 dark:bg-stone-800"
-                id="emailRegistro" v-model="emailRegistro" placeholder="Email" />
+              <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-bold mb-2 text-stone-500 dark:text-stone-300">Email</span>
+              <input type="email" class="shadow appearance-none border rounded w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:shadow-outline text-stone-500 dark:text-stone-300 bg-stone-50 dark:bg-stone-800" id="emailRegistro" v-model="emailRegistro" placeholder="Email" />
               <p v-if="emailError" class="mt-1 text-pink-600 text-sm">Por favor, introduce un email válido.</p>
               <p v-if="emailVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
             </label>
           </div>
           <div class="mb-24">
             <label>
-              <span
-                class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-bold mb-2 text-stone-500 dark:text-stone-300">Contraseña</span>
+              <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-bold mb-2 text-stone-500 dark:text-stone-300">Contraseña</span>
               <Password v-model="passwordRegistro" toggleMask />
               <p v-if="passwordVacio" class="mt-1 text-pink-600 text-sm">Este campo es obligatorio.</p>
               <p v-if="usuarioExistente" class="mt-1 text-pink-600 text-sm">El username o email ya existe.</p>
             </label>
           </div>
           <div class="flex items-center justify-between">
-            <button
-              class="text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline bg-stone-600 dark:text-stone-900 dark:bg-stone-300 hover:bg-stone-700 dark:hover:bg-stone-400 transition-colors duration-300 ease-in-out"
-              type="submit">Registrarse</button>
+            <button class="text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline bg-stone-600 dark:text-stone-900 dark:bg-stone-300 hover:bg-stone-700 dark:hover:bg-stone-400 transition-colors duration-300 ease-in-out" type="submit">Registrarse</button>
           </div>
         </form>
+
         <div class="flex items-center justify-center mt-6">
-          <button id="toggle-form" class="text-sm hover:underline focus:outline-none text-stone-500 dark:text-stone-300"
-            type="button" @click="toggleForm">
+          <button id="toggle-form" class="text-sm hover:underline focus:outline-none text-stone-500 dark:text-stone-300" type="button" @click="toggleForm">
             {{ toggleButtonText }}
           </button>
         </div>
@@ -269,4 +254,4 @@ const closePopup = () => {
   </div>
 </template>
 
-<style></style>@/others/validations/others
+<style></style>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useCookies } from 'vue3-cookies'
 import axios from 'axios'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import router from '@/router'
 
 // Ruta del backend desde variables de entorno
@@ -11,27 +11,33 @@ const URL_Backend = import.meta.env.VITE_URL_BACKEND
 const { cookies } = useCookies()
 const token: string = cookies.get('token')
 
+//Definición de props
 const props = defineProps(['visible'])
-const username = ref('')
-const profilePicture = ref('')
-const privilegios=ref()
-let datos = null
 
-// Hacer la solicitud utilizando Axios
-axios
-  .get(`${URL_Backend}user?token=${token}`, { headers: { 'api-key': `${token}` } })
-  .then((response) => {
-    // Manejar la respuesta aquí
-    datos = response.data.users[0]
-    username.value = datos.username
-    profilePicture.value = datos.profilePicture ? datos.profilePicture : '/FCTProject/public/usuario.png'
-    privilegios.value=datos.role
-  })
-  .catch((error) => {
-    // Manejar errores aquí
-    console.error('Error:', error)
-  })
+//Variables reactivas
+const username = ref<string>('')
+const profilePicture = ref<string>('')
+const privileges = ref<string>('')
+const data = ref<any>({})
 
+// Obtener datos necesarios del usuario 
+const getDataUser=async()=>{
+  try{
+    const response = await axios.get(`${URL_Backend}user?token=${token}`, { headers: { 'api-key': `${token}` } })
+    data.value = response.data.users[0]
+    username.value = data.value.username
+    profilePicture.value = data.value.profilePicture ? data.value.profilePicture : '/FCTProject/public/usuario.png'
+    privileges.value = data.value.role
+  }catch(e){
+    console.log(e)
+  }
+}
+
+onMounted(()=>{
+  getDataUser()
+})
+
+//Borrar token y regresar al loggin
 const logout = () => {
   cookies.remove('token')
   router.push('/')
@@ -61,7 +67,7 @@ const logout = () => {
                 <li>
                   <div class="p-3 flex items-center justify-between text-600 cursor-pointer"></div>
                   <ul class="p-0 m-0 overflow-hidden">
-                    <RouterLink v-if="privilegios=='ADMIN'" to="/admin" @click="$emit('visible')">
+                    <RouterLink v-if="privileges == 'ADMIN'" to="/admin" @click="$emit('visible')">
                       <li>
                         <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-blue-600/20">
                           <i class="pi pi-prime mr-2 text-blue-500"></i>

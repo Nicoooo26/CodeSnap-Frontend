@@ -2,9 +2,9 @@
 import { useDark, useToggle } from '@vueuse/core'
 import router from '@/router'
 import { onMounted, ref } from 'vue'
-import SideBarComponent from './SideBarComponent.vue';
-import { useCookies } from 'vue3-cookies';
-import axios from 'axios';
+import SideBarComponent from './SideBarComponent.vue'
+import { useCookies } from 'vue3-cookies'
+import axios from 'axios'
 
 // Ruta del backend desde variables de entorno
 const URL_Backend = import.meta.env.VITE_URL_BACKEND
@@ -13,24 +13,35 @@ const URL_Backend = import.meta.env.VITE_URL_BACKEND
 const { cookies } = useCookies()
 const token: string = cookies.get('token')
 
-const username = ref('')
-const visible = ref(false)
-const VisibleOff=()=>{
-  visible.value=false
-}
+//Controlar con un botón el modo oscuro
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
 
-const menu = ref()
+//Variables reactivas
+const username = ref<string>('')
+const visible = ref<boolean>(false)
+const menu = ref<any>()
+
+//Ver el sidebar
+const VisibleOff = () => {
+  visible.value = false
+}
+
+//Desconectar el usuario de la aplicación
 const signOut = () => {
   cookies.remove('token')
   router.push('/')
 }
+
+//Redirigir al perfil
 const profileMove = () => {
   router.push('/profile')
-  location.reload
 }
+
+//Redirigir a ajustes
 const settingMove = () => router.push('/setting')
+
+//Recuperar el nombre del usuario
 const getUsers = async () => {
   try {
     const response = await axios.get(`${URL_Backend}user?token=${token}`, {
@@ -41,6 +52,8 @@ const getUsers = async () => {
     console.log(e)
   }
 }
+
+//Items del menú
 const items = ref([
   {
     label: username,
@@ -63,9 +76,12 @@ const items = ref([
     ]
   }
 ])
-onMounted(async()=>{
+
+onMounted(async () => {
   await getUsers()
 })
+
+//Mostrar menu 
 const toggle = (event: Event) => {
   menu.value.toggle(event)
 }
@@ -75,7 +91,7 @@ const toggle = (event: Event) => {
   <nav class="bg-stone-200 dark:bg-stone-800 border-b border-stone-700 transition-colors duration-300">
     <div class="max-w-screen-xl flex items-center justify-between mx-auto p-4">
       <div class="flex items-center space-x-3 rtl:space-x-reverse">
-        <RouterLink to="/home" class="flex items-center space-x-3 rtl:space-x-reverse transition-colors duration-300 ">
+        <RouterLink to="/home" class="flex items-center space-x-3 rtl:space-x-reverse transition-colors duration-300">
           <img src="/logo.jpg" class="h-8 logoNavbar rounded-lg transition-opacity duration-300 hover:opacity-75" alt="CodeSnap Logo" />
           <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-stone-400">CodeSnap</span>
         </RouterLink>
@@ -85,7 +101,7 @@ const toggle = (event: Event) => {
           <Button type="button" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" class=""> <Avatar icon="pi pi-user" class="mr-2 bg-stone-400 hover:bg-stone-600 border border-stone-800 dark:border-stone-100" size="large" shape="circle" /></Button>
           <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
         </div>
-        <button @click="toggleDark()" class="top-4 right-4  dark:bg-stone-800 rounded-full px-3 py-2 transition-colors duration-300 ease-in-out hover:bg-stone-600 dark:hover:bg-stone-700">
+        <button @click="toggleDark()" class="top-4 right-4 dark:bg-stone-800 rounded-full px-3 py-2 transition-colors duration-300 ease-in-out hover:bg-stone-600 dark:hover:bg-stone-700">
           <span class="text-white pi pi-sun" v-if="isDark"></span>
           <span class="text-dark pi pi-moon" v-else></span>
         </button>
