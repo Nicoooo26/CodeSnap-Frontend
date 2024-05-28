@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import CrearForoComponent from '@/components/CrearForoComponent.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
+import axios from 'axios';
+
+// Ruta del backend desde variables de entorno
+const URL_Backend = import.meta.env.VITE_URL_BACKEND
 
 //Mostrar Toast 
 const toast = useToast()
@@ -17,22 +21,32 @@ const controlEmit = (mssg: string): void => {
 
 }
 
-// Array de foros
-const forums = [
-  { name: 'PHP', imagen: 'programacionIcons/phpIcon.png', link: '/foros/php' },
-  { name: 'JAVA', imagen: 'programacionIcons/javaIcon.png', link: '/foros/java' },
-  { name: 'JAVASCRIPT', imagen: 'programacionIcons/jsIcon.png', link: '/foros/javascript' },
-  { name: 'C', imagen: 'programacionIcons/cIcon.png', link: '/foros/c' },
-  { name: 'HTML', imagen: 'programacionIcons/htmlIcon.png', link: '/foros/html' },
-  { name: 'PHYTON', imagen: 'programacionIcons/phytonIcon.png', link: '/foros/phyton' },
-  { name: 'CSS', imagen: 'programacionIcons/cssIcon.png', link: '/foros/css' },
-  { name: 'SQL', imagen: 'programacionIcons/sqlIcon.png', link: '/foros/sql' },
-  { name: 'RUST', imagen: 'programacionIcons/rustIcon.png', link: '/foros/rust' }
-]
+//Variables reactivas
+const loading = ref<boolean>(true)
+const forums = ref()
+
+// Obtiene los foros de la app
+const getForumsApp = async (): Promise<void> => {
+  try {
+    const response = await axios.get(`${URL_Backend}forumsApp`)
+    forums.value = response.data.forumsApp
+    loading.value = false
+  } catch (e) {
+    console.log(e)
+    loading.value = false
+  }
+}
+
+onMounted(()=>{
+  getForumsApp()
+})
 </script>
 
 <template>
-  <div>
+  <div v-if="loading" class="loading-overlay">
+    <ProgressSpinner />
+  </div>
+  <div v-else>
     <Toast />
     <div class="flex justify-center">
       <button @click="openModal"
@@ -59,4 +73,17 @@ const forums = [
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(25, 24, 24, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+</style>

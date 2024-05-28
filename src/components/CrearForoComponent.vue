@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useCookies } from 'vue3-cookies';
 import { useToast } from "primevue/usetoast";
 
@@ -23,6 +23,17 @@ const type = ref<string>('');
 const title = ref<string>('');
 const question = ref<string>('');
 const idUser = ref<string>('');
+const forums = ref()
+
+//Recuperar foros de la app
+const getForumsApp = async (): Promise<void> => {
+  try {
+    const response = await axios.get(`${URL_Backend}forumsApp`)
+    forums.value = response.data.forumsApp
+  } catch (e) {
+    console.log(e)
+  }
+}
 
 //Función para crear foros
 const createForum = async() => {
@@ -48,17 +59,10 @@ const createForum = async() => {
     console.log(e);
   }
 };
-const forums = [
-  { name: 'PHP', imagen: 'programacionIcons/phpIcon.png', link: '/foros/php' },
-  { name: 'JAVA', imagen: 'programacionIcons/javaIcon.png', link: '/foros/java' },
-  { name: 'JAVASCRIPT', imagen: 'programacionIcons/jsIcon.png', link: '/foros/javascript' },
-  { name: 'C', imagen: 'programacionIcons/cIcon.png', link: '/foros/c' },
-  { name: 'HTML', imagen: 'programacionIcons/htmlIcon.png', link: '/foros/html' },
-  { name: 'PHYTON', imagen: 'programacionIcons/phytonIcon.png', link: '/foros/phyton' },
-  { name: 'CSS', imagen: 'programacionIcons/cssIcon.png', link: '/foros/css' },
-  { name: 'SQL', imagen: 'programacionIcons/sqlIcon.png', link: '/foros/sql' },
-  { name: 'RUST', imagen: 'programacionIcons/rustIcon.png', link: '/foros/rust' }
-]
+
+onMounted(()=>{
+  getForumsApp();
+})
 </script>
 
 <template>

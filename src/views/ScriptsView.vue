@@ -43,8 +43,10 @@ const getScripts = async (): Promise<void> => {
     scripts.value = response.data.scripts
     sortScriptsByDate()
     await getUsername()
+    loading.value = false
   } catch (e) {
     console.log(e)
+    loading.value = false
   }
 }
 

@@ -109,7 +109,7 @@ onMounted(() => {
             <li v-for="script in scripts" :key="script.id" class="mb-4 pb-2">
               <h3 class="text-xl font-semibold text-stone-800 dark:text-stone-200">{{ script.title }}</h3>
               <pre
-                class="bg-stone-100 dark:bg-stone-900 p-2 rounded text-stone-800 dark:text-stone-200">{{ decodeBase64(script.code).split('\n')[0] }}</pre>
+                class="bg-stone-100 dark:bg-stone-900 p-2 rounded text-stone-800 dark:text-stone-200">{{ decodeBase64(script.code).split('\n')[0].slice(0,40) }}</pre>
               <p class="text-sm text-stone-500 dark:text-stone-400">Creado por usuario {{ script.idUser }} el {{ new Date(script.dateCreated).toLocaleDateString() }}</p>
             </li>
           </ul>
