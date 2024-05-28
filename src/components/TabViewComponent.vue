@@ -236,6 +236,7 @@ const SavePhoto = () => {
       console.error("Error:", error);
     });
 };
+const reversedPhotos = computed(() => photos.value.slice().reverse());
 </script>
 
 <template>
@@ -288,8 +289,8 @@ const SavePhoto = () => {
             </a>
           </div>
           <!-- Itera sobre cada foto -->
-          <div v-for="photo in photos" :key="photo.id" class="w-1/3 p-px md:px-3">
-            <router-link :to="{ name: 'instantaneas', params: { id: photo.id } }">
+          <div v-for="photo in reversedPhotos" :key="photo.id" class="w-1/3 p-px md:px-3">
+            <router-link :to="{ name: 'instantaneas', params: { id: photo.id, userId:props.userId } }">
               <article class="post bg-gray-100 text-white relative w-full h-full pb-full md:mb-6">
                 <!-- Muestra la imagen de la foto -->
                 <img class="w-full h-full absolute left-0 top-0 object-cover" :src="photo.photo" :alt="`image-${photo.id}`" />
@@ -316,7 +317,7 @@ const SavePhoto = () => {
           <span class="font-bold white-space-nowrap">scripts</span>
         </div>
       </template>
-      <div v-if="numScripts == 0" class="m-0">No existen scripts actualmente</div>
+      <div v-if="props.numScripts == 0" class="m-0">No existen scripts actualmente</div>
       <div v-else>
         <ul class="space-y-4">
           <li v-for="(script, index) in displayedScripts" :key="index" class="border border-stone-300 rounded">
