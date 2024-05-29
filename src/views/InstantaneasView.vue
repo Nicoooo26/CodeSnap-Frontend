@@ -35,10 +35,10 @@ const toggleHeart = (photoId: string) => {
   const photo = photos.value.find((p) => p.id === photoId);
   if (photo) {
     photo.liked = !photo.liked;
-    $('.content').toggleClass("heart-active")
-    $('.text').toggleClass("heart-active")
-    $('.numb').toggleClass("heart-active")
-    $('.heart').toggleClass("heart-active")
+    // $('.content').toggleClass("heart-active")
+    // $('.text').toggleClass("heart-active")
+    // $('.numb').toggleClass("heart-active")
+    // $('.heart').toggleClass("heart-active")
   }
 };
 const data = ref<any>({})
