@@ -6,6 +6,7 @@ import Password from 'primevue/password'
 import { useRouter } from 'vue-router'
 import { useCookies } from 'vue3-cookies'
 import axios from 'axios'
+
 // Ruta del backend desde variables de entorno
 const URL_Backend = import.meta.env.VITE_URL_BACKEND
 
@@ -39,8 +40,6 @@ const toggleButtonText = computed(() => {
 const titleView = computed(() => {
   return loginVisible.value ? 'INICIAR SESIÓN' : 'REGISTRO'
 })
-
-
 
 //Cambio entre login y registro.Limpia los campos
 const toggleForm = () => {
