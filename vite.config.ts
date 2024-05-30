@@ -10,11 +10,11 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      '/api': {
+      'https://54.205.134.77/CodesnapBackend': {
         target: 'https://54.205.134.77/CodesnapBackend/',
         changeOrigin: true,
         secure: false, // Esto deshabilita la verificación del certificado SSL
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: (path) => path.replace('https://54.205.134.77/CodesnapBackend/','https://54.205.134.77/CodesnapBackend/'),
       },
     },
   },
