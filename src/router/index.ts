@@ -21,8 +21,8 @@ import { ref } from 'vue'
 
 const URL_Backend = import.meta.env.VITE_URL_BACKEND
 const { cookies } = useCookies()
-const role = ref<string>('')
-const blocked = ref<number>(0)
+const role = ref<string>()
+const blocked = ref<number>()
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
