@@ -6,8 +6,6 @@ import Password from 'primevue/password'
 import { useRouter } from 'vue-router'
 import { useCookies } from 'vue3-cookies'
 import axios from 'axios'
-import * as https from 'https';
-
 // Ruta del backend desde variables de entorno
 const URL_Backend = import.meta.env.VITE_URL_BACKEND
 
@@ -42,9 +40,7 @@ const titleView = computed(() => {
   return loginVisible.value ? 'INICIAR SESIÓN' : 'REGISTRO'
 })
 
-const agent = new https.Agent({
-  rejectUnauthorized: false
-});
+
 
 //Cambio entre login y registro.Limpia los campos
 const toggleForm = () => {
@@ -79,7 +75,7 @@ const login = async () => {
       const response = await axios.post(`${URL_Backend}auth`, {
         username: usernameLogin.value,
         password: passwordLogin.value
-      }, { httpsAgent: agent })
+      })
       cookies.set('token', response.data.token)
       router.push({ name: 'home' })
     } catch (e) {
