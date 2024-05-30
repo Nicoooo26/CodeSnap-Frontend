@@ -26,7 +26,7 @@ const getDataUser=async()=>{
     const response = await axios.get(`${URL_Backend}user?token=${token}`, { headers: { 'api-key': `${token}` } })
     data.value = response.data.users[0]
     username.value = data.value.username
-    profilePicture.value = data.value.profilePicture ? data.value.profilePicture : '/public/usuario.png'
+    profilePicture.value = data.value.profilePicture ? data.value.profilePicture : 'usuario.png'
     privileges.value = data.value.role
   }catch(e){
     console.log(e)

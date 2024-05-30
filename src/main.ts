@@ -23,6 +23,7 @@ import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
+import Ripple from 'primevue/ripple';
 
 const app = createApp(App);
 
@@ -31,6 +32,8 @@ app.use(ConfirmationService);
 app.use(ToastService);
 app.use(DialogService);
 app.use(router);
+
+app.directive('ripple', Ripple);
 
 app.component('Toast', Toast);
 app.component('ProgressSpinner', ProgressSpinner);
