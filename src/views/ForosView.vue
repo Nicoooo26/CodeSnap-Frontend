@@ -29,6 +29,7 @@ const forums = ref()
 const getForumsApp = async (): Promise<void> => {
   try {
     const response = await axios.get(`${URL_Backend}forumsApp`)
+    console.log(response)
     forums.value = response.data.forumsApp
     loading.value = false
   } catch (e) {
@@ -39,6 +40,7 @@ const getForumsApp = async (): Promise<void> => {
 
 onMounted(()=>{
   getForumsApp()
+  console.log(URL_Backend)
 })
 </script>
 

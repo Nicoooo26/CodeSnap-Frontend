@@ -72,7 +72,7 @@ const login = async () => {
   }
   if (passwordVacio.value === false && usernameVacio.value === false) {
     try {
-      const response = await axios.post(`${URL_Backend}auth`, {
+      const response = await axios.post(`${URL_Backend}/auth`, {
         username: usernameLogin.value,
         password: passwordLogin.value
       })
