@@ -12,11 +12,14 @@ export default defineConfig({
     proxy: {
       '/CodesnapBackend': {
         target: 'https://54.205.134.77',
-        secure: false, // Esto ignorará los errores de certificados SSL
+        secure:false,
         changeOrigin: true,
-        agent: new https.Agent({  
-          rejectUnauthorized: false, // Esto ignorará los certificados no autorizados
-        }),
+        // Reemplaza `agent` con `followRedirects` para evitar errores de redirección
+        followRedirects: true,
+        // Agrega un encabezado `host` para la solicitud
+        headers: {
+          host: '54.205.134.77',
+        },
       },
     },
   },
