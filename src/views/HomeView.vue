@@ -56,6 +56,7 @@ const getPhotos = async (): Promise<void> => {
     loading.value = false
   } catch (e) {
     console.log(e)
+    loading.value = false
   }
 }
 

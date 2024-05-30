@@ -41,7 +41,7 @@ const getDataUser = async (userId?: string): Promise<void> => {
     const response = await axios.get(endpoint, { headers: { 'api-key': `${token}` } })
     data.value = response.data.users[0]
     // Si no hay imagen de perfil, usa una por defecto
-    data.value.profilePicture = data.value.profilePicture ? data.value.profilePicture : 'usuario.png'
+    data.value.profilePicture = data.value.profilePicture ? data.value.profilePicture : '/usuario.png'
     loading.value = false
   } catch (e) {
     console.log(e)
