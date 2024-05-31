@@ -52,7 +52,7 @@ onMounted(() => {
   <div v-if="loading" class="loading-overlay">
     <ProgressSpinner />
   </div>
-  <div v-else class="flex flex-col items-center bg-stone-100 dark:bg-stone-950">
+  <div v-else class="flex flex-col items-center bg-stone-100 dark:bg-stone-700">
     <header class="top-0 w-full bg-stone-200 dark:bg-stone-800 shadow-md py-4 px-6 z-10">
       <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
         <h1 class="text-xl font-semibold text-stone-900 dark:text-stone-100 uppercase">FOROS {{ lenguage }}</h1>
@@ -66,7 +66,7 @@ onMounted(() => {
           class="px-4 py-2 border border-stone-300 rounded-md w-full max-w-lg focus:outline-none focus:ring-2 focus:ring-stone-500 dark:bg-stone-700 dark:text-stone-100" />
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div v-if="filteredForums.length == 0">No existen foros actualmente</div>
+        <div v-if="filteredForums.length == 0" class="dark:text-stone-100">No existen foros actualmente</div>
         <div v-else v-for="foro in filteredForums" :key="foro.id"
           class="bg-stone-50 dark:bg-stone-900 shadow-md rounded-lg p-6 transition transform hover:-translate-y-1 hover:shadow-lg">
           <RouterLink :to="`/foro/${foro.id}`"
