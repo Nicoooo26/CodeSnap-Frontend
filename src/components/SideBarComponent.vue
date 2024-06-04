@@ -124,14 +124,7 @@ const logout = () => {
                     <span class="font-medium text-stone-600 dark:text-stone-200">CONFIGURACIÓN GENERAL</span>
                   </div>
                   <ul class="list-none p-0 m-0 overflow-hidden">
-                    <RouterLink to="/setting" @click="$emit('visible')">
-                      <li>
-                        <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-stone-300 dark:hover:bg-stone-700">
-                          <i class="pi pi-cog mr-2 text-stone-600 dark:text-stone-200"></i>
-                          <span class="font-medium text-stone-600 dark:text-stone-200">Ajustes</span>
-                        </div>
-                      </li>
-                    </RouterLink>
+                    
                     <RouterLink to="/soporte" @click="$emit('visible')">
                       <li>
                         <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-stone-300 dark:hover:bg-stone-700">
