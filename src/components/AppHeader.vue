@@ -38,9 +38,6 @@ const profileMove = () => {
   router.push('/profile')
 }
 
-//Redirigir a ajustes
-const settingMove = () => router.push('/setting')
-
 //Recuperar el nombre del usuario
 const getUsers = async () => {
   try {
@@ -62,11 +59,6 @@ const items = ref([
         label: 'Perfil',
         icon: 'pi pi-user',
         command: profileMove
-      },
-      {
-        label: 'Ajustes',
-        icon: 'pi pi-cog',
-        command: settingMove
       },
       {
         label: 'Desconectar',
