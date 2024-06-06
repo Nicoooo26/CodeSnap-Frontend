@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, type RouteLocationNormalizedLoaded } from 'vue-router';
+import { useRouter, type Router } from 'vue-router';
 import axios from 'axios';
 import { useCookies } from 'vue3-cookies';
 
@@ -10,10 +11,10 @@ const URL_Backend = import.meta.env.VITE_URL_BACKEND
 // Obtener token de cookies
 const { cookies } = useCookies()
 const token: string = cookies.get('token')
-
+const router:Router = useRouter()
 const route: RouteLocationNormalizedLoaded = useRoute()
 const photoId: string | string[] = route.params.id
-
+const idUserActual = ref<string>('')
 // Refs para almacenar los datos de la foto
 const photos = ref<any[]>([]); // Cambiado a un array de fotos
 
@@ -22,15 +23,20 @@ const obtenerFotos = async () => {
     const response = await axios.get(`${URL_Backend}photo?id=${photoId}`, { headers: { 'api-key': token } });
     photos.value = response.data.photos;
     for (const photo of photos.value) {
-      const likeResponse = await axios.get(`${URL_Backend}likes?idPhoto=${photo.id}&idUser=${data.value.id}`, { headers: { 'api-key': token } });
-      if (likeResponse.data.likes.length > 0) {
-        console.log(likeResponse.data.likes[0])
+      const likeResponse = await axios.get(`${URL_Backend}likes?idPhoto=${photo.id}`, { headers: { 'api-key': token } });
+      const userLike = likeResponse.data.likes.find((like: any) => like.idUser === idUserActual.value);
+      if (userLike) {
         photo.liked = true;
-        photo.likeId = likeResponse.data.likes[0].id;
+        photo.likeId = userLike.id;
       } else {
         photo.liked = false;
         photo.likeId = null;
       }
+      photo.likes = likeResponse.data.likes.length; // Asigna la cantidad de likes al photo
+      
+      // Obtener el dueño de la foto
+      const ownerResponse = await axios.get(`${URL_Backend}user?id=${photo.idUser}`, { headers: { 'api-key': token } });
+      photo.owner = ownerResponse.data.users[0];
     }
   } catch (error) {
     console.error('Error al obtener las fotos:', error);
@@ -47,17 +53,17 @@ const toggleHeart = async (photoId: string) => {
   if (photo) {
     try {
       if (!photo.liked) {
-        // Si no le ha dado like, lo añade
         console.log('like')
-        await axios.post(`${URL_Backend}likes`, { idPhoto: photoId, idUser: data.value.id }, { headers: { 'api-key': token } });
+        const response = await axios.post(`${URL_Backend}likes`, { idPhoto: photoId, idUser: idUserActual.value }, { headers: { 'api-key': token } });
         photo.likes += 1;
-        
+        photo.likeId = response.data.id;
       } else {
+        console.log('unlike')
         await axios.delete(`${URL_Backend}likes?id=${photo.likeId}`, { headers: { 'api-key': token } });
         photo.likes -= 1;
+        photo.likeId = null; // Resetea el id del like
       }
       photo.liked = !photo.liked;
-      
     } catch (error) {
       console.error('Error al cambiar el estado del like:', error);
       const errorMessage = ref<string>('');
@@ -70,6 +76,7 @@ const data = ref<any>({})
 const loading = ref<boolean>(true)
 const getDataUser = async (userId?: string): Promise<void> => {
   try {
+    console.log(userId)
     const endpoint = userId ? `${URL_Backend}user?id=${userId}` : `${URL_Backend}user?token=${token}`
     const response = await axios.get(endpoint, { headers: { 'api-key': `${token}` } })
     data.value = response.data.users[0]
@@ -87,6 +94,7 @@ onMounted(() => {
   loading.value = true
   const userId = route.params.userId as string | undefined
   getDataUser(userId) // Obtiene los datos del usuario
+  getIDUser().then(() => cargarDatos()); // Asegúrate de que el id del usuario actual esté disponible antes de cargar las fotos
 })
 
 // Observa cambios en el ID del usuario
@@ -97,28 +105,46 @@ watch(
     getDataUser(newId) // Obtiene los datos del usuario
   }
 )
-const isCurrentUser = computed(() => !route.params.userId)
 const eliminarFoto = async (photoId: string) => {
-  try {
-    await axios.delete(`${URL_Backend}photo?id=${photoId}`, { headers: { 'api-key': `${token}` } });
-    // Eliminar la foto del array local de fotos
-    photos.value = photos.value.filter(photo => photo.id !== photoId);
-  } catch (error) {
-    console.error('Error al eliminar la foto:', error);
+  const photo = photos.value.find(photo => photo.id === photoId);
+  if (photo && photo.owner.id === idUserActual.value) {
+    try {
+      await axios.delete(`${URL_Backend}photo?id=${photoId}`, { headers: { 'api-key': `${token}` } });
+      // Eliminar la foto del array local de fotos
+      photos.value = photos.value.filter(photo => photo.id !== photoId);
+    } catch (error) {
+      console.error('Error al eliminar la foto:', error);
+    }
+  } else {
+    console.error('No tienes permiso para eliminar esta foto.');
   }
 }
-
+const getIDUser = async (): Promise<void> => {
+  try {
+    const response = await axios.get(`${URL_Backend}user?token=${token}`, {headers: { 'api-key': `${token}` }})
+    idUserActual.value = response.data.users[0].id
+  } catch (e) {
+    console.log(e)
+  }
+}
+const goToProfile = (userId: string):void => {
+  if (idUserActual.value !== userId) {
+    router.push({ name: 'profile', params: { id: userId } })
+  } else {
+    router.push({ name: 'profile' })
+  }
+}
 </script>
 
 <template>
   <div class="container">
     <div v-for="photo in photos" :key="photo.id" class="photo-wrapper">
       <div class="details-top">
-        <div class="profile-picture-wrapper md:w-3/12 md:ml-16">
-          <img class="profile-picture" :src="data.profilePicture" alt="profile" />
-          <p class="username">{{ data.username }}</p>
+        <div class="profile-picture-wrapper md:ml-16">
+          <img  class="profile-picture" :src="photo.owner.profilePicture" alt="profile" @click="goToProfile(photo.owner.id)" style="cursor: pointer" />
+            <p class="username" @click="goToProfile(photo.owner.id)" style="cursor: pointer">{{ photo.owner.username }}</p>
           <div class="button-container">
-            <button v-if="isCurrentUser" @click="eliminarFoto(photo.id)" class="delete-btn"><svg
+            <button v-if="photo.owner.id === idUserActual" @click="eliminarFoto(photo.id)" class="delete-btn"><svg
                 xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
                 viewBox="0 0 16 16">
                 <path
@@ -128,7 +154,6 @@ const eliminarFoto = async (photoId: string) => {
               </svg></button>
           </div>
         </div>
-
       </div>
       <div class="selected-photo">
         <img :src="photo.photo" alt="Foto seleccionada" class="photo" />
@@ -137,7 +162,7 @@ const eliminarFoto = async (photoId: string) => {
         <div class="heart-btn">
           <div class="content" @click="toggleHeart(photo.id)">
             <span :class="{ 'heart': true, 'heart-active': photo.liked }"></span>
-            <span class="numb"></span>
+            <span class="numb">{{ photo.likes }}</span>
           </div>
         </div>
         <div class="description">
@@ -147,7 +172,6 @@ const eliminarFoto = async (photoId: string) => {
     </div>
   </div>
 </template>
-
 <style scoped>
 @import url('https://fonts.googleapis.com/css?family=Montserrat:600&display=swap');
 
@@ -184,8 +208,7 @@ const eliminarFoto = async (photoId: string) => {
   font-family: 'Montserrat', sans-serif;
 }
 
-.numb:before {
-  content: '12';
+.numb {
   font-size: 21px;
   margin-left: 7px;
   font-weight: 600;
@@ -193,8 +216,7 @@ const eliminarFoto = async (photoId: string) => {
   font-family: sans-serif;
 }
 
-.numb.heart-active:before {
-  content: '13';
+.numb.heart-active {
   color: #000;
 }
 
