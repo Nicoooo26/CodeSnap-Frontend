@@ -21,6 +21,17 @@ const obtenerFotos = async () => {
   try {
     const response = await axios.get(`${URL_Backend}photo?id=${photoId}`, { headers: { 'api-key': token } });
     photos.value = response.data.photos;
+    for (const photo of photos.value) {
+      const likeResponse = await axios.get(`${URL_Backend}likes?idPhoto=${photo.id}&idUser=${data.value.id}`, { headers: { 'api-key': token } });
+      if (likeResponse.data.likes.length > 0) {
+        console.log(likeResponse.data.likes[0])
+        photo.liked = true;
+        photo.likeId = likeResponse.data.likes[0].id;
+      } else {
+        photo.liked = false;
+        photo.likeId = null;
+      }
+    }
   } catch (error) {
     console.error('Error al obtener las fotos:', error);
   }
@@ -31,16 +42,30 @@ const cargarDatos = async () => {
 };
 onMounted(cargarDatos);
 
-const toggleHeart = (photoId: string) => {
+const toggleHeart = async (photoId: string) => {
   const photo = photos.value.find((p) => p.id === photoId);
   if (photo) {
-    photo.liked = !photo.liked;
-    // $('.content').toggleClass("heart-active")
-    // $('.text').toggleClass("heart-active")
-    // $('.numb').toggleClass("heart-active")
-    // $('.heart').toggleClass("heart-active")
+    try {
+      if (!photo.liked) {
+        // Si no le ha dado like, lo añade
+        console.log('like')
+        await axios.post(`${URL_Backend}likes`, { idPhoto: photoId, idUser: data.value.id }, { headers: { 'api-key': token } });
+        photo.likes += 1;
+        
+      } else {
+        await axios.delete(`${URL_Backend}likes?id=${photo.likeId}`, { headers: { 'api-key': token } });
+        photo.likes -= 1;
+      }
+      photo.liked = !photo.liked;
+      
+    } catch (error) {
+      console.error('Error al cambiar el estado del like:', error);
+      const errorMessage = ref<string>('');
+      errorMessage.value = (error as any).response?.data?.message || 'Error desconocido al cambiar el estado del like';
+    }
   }
 };
+
 const data = ref<any>({})
 const loading = ref<boolean>(true)
 const getDataUser = async (userId?: string): Promise<void> => {
@@ -82,6 +107,7 @@ const eliminarFoto = async (photoId: string) => {
     console.error('Error al eliminar la foto:', error);
   }
 }
+
 </script>
 
 <template>
