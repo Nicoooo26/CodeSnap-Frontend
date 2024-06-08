@@ -6,6 +6,7 @@ import SettingView from '@/views/SettingView.vue'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import PrivacityPoliticView from '@/views/PrivacityPoliticView.vue'
 import ScriptsView from '@/views/ScriptsView.vue'
+import FotosView from '@/views/FotosView.vue'
 import ExplorerView from '@/views/ExplorerView.vue'
 import ForosView from '@/views/ForosView.vue'
 import InstantaneasView from '@/views/InstantaneasView.vue'
@@ -53,7 +54,11 @@ const router = createRouter({
           name: 'profile',
           component: ProfileView
         },
-
+        {
+          path: '/fotos',
+          name: 'fotos',
+          component: FotosView
+        },
         {
           path: '/scripts',
           name: 'scripts',

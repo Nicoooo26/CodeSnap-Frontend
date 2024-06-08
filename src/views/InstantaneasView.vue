@@ -53,6 +53,7 @@ const toggleHeart = async (photoId: string) => {
   if (photo) {
     try {
       if (!photo.liked) {
+        console.log(idUserActual.value)
         console.log('like')
         const response = await axios.post(`${URL_Backend}likes`, { idPhoto: photoId, idUser: idUserActual.value }, { headers: { 'api-key': token } });
         photo.likes += 1;

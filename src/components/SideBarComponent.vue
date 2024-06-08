@@ -91,7 +91,7 @@ const logout = () => {
                         </div>
                       </li>
                     </RouterLink>
-                    <RouterLink to="/instantaneas" @click="$emit('visible')">
+                    <RouterLink to="/fotos" @click="$emit('visible')">
                       <li>
                         <div v-ripple class="flex align-items-center cursor-pointer p-4 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple hover:bg-stone-300 dark:hover:bg-stone-700">
                           <i class="pi pi-images mr-2 text-stone-600 dark:text-stone-200"></i>

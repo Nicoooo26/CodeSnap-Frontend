@@ -230,6 +230,7 @@ const SavePhoto = () => {
     .then(() => {
       showModal.value = false;
       obtenerFotos();
+      descripcion.value = ""; // Limpiar el campo de descripción después de subir la foto
       emits("cerrar");
     })
     .catch((error) => {
@@ -262,7 +263,7 @@ const reversedPhotos = computed(() => photos.value.slice().reverse());
                     <p v-else class="text-stone-500 dark:text-stone-400">Ninguna foto seleccionada</p>
                   </div>
                 </div>
-                <div class="flex flex-col space-y-4">
+                <div id="app" class="flex flex-col space-y-4">
                   <textarea placeholder="Descripcion" v-model="descripcion" class="border border-stone-300 dark:border-stone-600 p-2 rounded w-full h-32 bg-stone-50 dark:bg-stone-800 text-stone-800 dark:text-stone-100"></textarea>
                   <button @click="SavePhoto" class="px-4 py-2 rounded bg-stone-500 dark:bg-stone-700 text-white cursor-pointer hover:bg-stone-600 dark:hover:bg-stone-800 focus:outline-none transition-colors">Subir foto</button>
                   <button @click="showModal = false" class="bg-stone-300 dark:bg-stone-600 hover:bg-stone-400 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-100 font-bold py-2 px-4 rounded">Cerrar</button>
