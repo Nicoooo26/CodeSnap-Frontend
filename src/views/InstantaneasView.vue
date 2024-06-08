@@ -113,6 +113,7 @@ const eliminarFoto = async (photoId: string) => {
       await axios.delete(`${URL_Backend}photo?id=${photoId}`, { headers: { 'api-key': `${token}` } });
       // Eliminar la foto del array local de fotos
       photos.value = photos.value.filter(photo => photo.id !== photoId);
+      goToProfile(idUserActual.value)
     } catch (error) {
       console.error('Error al eliminar la foto:', error);
     }
