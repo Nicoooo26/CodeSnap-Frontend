@@ -23,7 +23,7 @@ const obtenerFotos = async () => {
     const response = await axios.get(`${URL_Backend}photo?id=${photoId}`, { headers: { 'api-key': token } });
     photos.value = response.data.photos;
     for (const photo of photos.value) {
-      const likeResponse = await axios.get(`${URL_Backend}likes?idPhoto=${photo.id}`, { headers: { 'api-key': token } });
+      const likeResponse = await axios.get(`${URL_Backend}like?idPhoto=${photo.id}`, { headers: { 'api-key': token } });
       const userLike = likeResponse.data.likes.find((like: any) => like.idUser === idUserActual.value);
       if (userLike) {
         photo.liked = true;
@@ -55,12 +55,12 @@ const toggleHeart = async (photoId: string) => {
       if (!photo.liked) {
         console.log(idUserActual.value)
         console.log('like')
-        const response = await axios.post(`${URL_Backend}likes`, { idPhoto: photoId, idUser: idUserActual.value }, { headers: { 'api-key': token } });
+        const response = await axios.post(`${URL_Backend}like`, { idPhoto: photoId, idUser: idUserActual.value }, { headers: { 'api-key': token } });
         photo.likes += 1;
         photo.likeId = response.data.id;
       } else {
         console.log('unlike')
-        await axios.delete(`${URL_Backend}likes?id=${photo.likeId}`, { headers: { 'api-key': token } });
+        await axios.delete(`${URL_Backend}like?id=${photo.likeId}`, { headers: { 'api-key': token } });
         photo.likes -= 1;
         photo.likeId = null; // Resetea el id del like
       }
