@@ -12,9 +12,6 @@ const idUserActual = ref<string>(''); // Asegúrate de que idUserActual esté in
 
 const router: Router = useRouter();
 
-const getProfilePicture = (owner: any): string => {
-  return owner ? owner.profilePicture : '/FCTProject/public/usuario.png';
-};
 const getIDUser = async (): Promise<void> => {
   try {
     const response = await axios.get(`${URL_Backend}user?token=${token}`, {headers: { 'api-key': `${token}` }})
@@ -93,7 +90,7 @@ onMounted(() => {
       <div class="photos-container">
         <div v-for="photo in photos" :key="photo.id" class="photo-card">
           <div class="photo-header">
-            <img class="profile-pic" :src="getProfilePicture(photo.owner)" alt="profile"
+            <img class="profile-pic" :src="photo.owner.profilePicture?photo.owner.profilePicture:'/usuario.png'" alt="profile"
               @click="goToProfile(photo.idUser)" style="cursor: pointer" />
             <span class="username" @click="goToProfile(photo.idUser)" style="cursor: pointer">
               {{ photo.owner ? photo.owner.username : 'Anonymous' }}
