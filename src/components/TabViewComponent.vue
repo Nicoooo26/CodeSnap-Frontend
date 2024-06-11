@@ -120,6 +120,10 @@ const obtenerFotos = async (idParam?: string): Promise<void> => {
         headers: { "api-key": `${token}` },
       });
       photos.value = photoResponse.data.photos;
+      for (const photo of photos.value) {
+        const likeResponse = await axios.get(`${URL_Backend}like?idPhoto=${photo.id}`, { headers: { "api-key": `${token}` } });
+        photo.numLikes = likeResponse.data.likes.length;
+      }
     } catch (e) {
       console.log(e);
     }
@@ -302,7 +306,7 @@ const reversedPhotos = computed(() => photos.value.slice().reverse());
                       <i class="pi pi-heart"></i>
                       <!-- Si el número de likes supera 1000, muestra '1k' -->
                       {{ formatLikes(photo.numLikes) }}
-                    </span>
+                    </span> 
                   </div>
                 </div>
               </article>
